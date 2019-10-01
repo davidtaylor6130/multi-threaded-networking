@@ -49,7 +49,7 @@ namespace SimpleClient
                 writer.Flush();
                 ProcessServerResponce();
 
-                if (userInput == "9")
+                if (userInput == "Shut Down")
                 {
                     Console.WriteLine("Client shutting down");
                     break;

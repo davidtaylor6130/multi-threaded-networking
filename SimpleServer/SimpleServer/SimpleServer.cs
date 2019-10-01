@@ -52,10 +52,9 @@ namespace SimpleServer
             while ((receivedMessage = reader.ReadLine()) != null)
             {
                 GetReturnMessage(receivedMessage);
-                if (receivedMessage == "9")
+
+                if (receivedMessage == "Shut Down")
                 {
-                    writer.WriteLine("Server shutting downs");
-                    writer.Flush();
                     break;
                 }
 
@@ -63,14 +62,66 @@ namespace SimpleServer
             socket.Close();
         }
 
-        void GetReturnMessage(string Code)
+        void GetReturnMessage(string input)
         {
-            if (Code == "8")
+            switch (input)
             {
-                writer.WriteLine("Good Bye .......");
-                writer.Flush();
+                case "1":
+                    ServerLog("1 Has Been Pressed");
+                    break;
+                case "2":
+                    ServerLog("2 Has Been Pressed");
+                    break;
+                case "3":
+                    ServerLog("3 Has Been Pressed");
+                    break;
+                case "4":
+                    ServerLog("4 Has Been Pressed");
+                    break;
+                case "5":
+                    ServerLog("5 Has Been Pressed");
+                    break;
+                case "6":
+                    ServerLog("6 Has Been Pressed");
+                    break;
+                case "7":
+                    ServerLog("7 Has Been Pressed");
+                    break;
+                case "8":
+                    ServerLog("8 Has Been Pressed");
+                    break;
+                case "9":
+                    ServerLog("9 Has Been Pressed");
+                    break;
+
+                    // <-------------------------------------COMMANDS SECTION----------------------------------->
+
+                case "Shut Down":
+                    ServerLog("Server Is Shutting itself down Now");
+                    break;
+
+                case "Clear ServerLog":
+                    Console.Clear();
+                    ServerLog("Logs have been cleared");
+                    break;
+
+                default :
+                    ServerLog("Error With Transmittion / Exixuting command");
+                        break;
+
             }
         }
+
+
+
+
+        void ServerLog(string input)
+        {
+            Console.WriteLine("Message: " + input + " Message Sent At: " + DateTime.Now.ToString("h:mm:ss tt"));
+            writer.WriteLine(input);
+            writer.Flush();
+        }
+
 
     }
 }
