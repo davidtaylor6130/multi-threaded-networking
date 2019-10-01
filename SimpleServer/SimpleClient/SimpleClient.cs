@@ -43,13 +43,21 @@ namespace SimpleClient
         {
             string userInput;
             ProcessServerResponce();
-            while((userInput = Console.ReadLine()) != null)
+            while ((userInput = Console.ReadLine()) != null)
             {
-                userInput = Console.ReadLine();
                 writer.WriteLine(userInput); // < -- stoped here
                 writer.Flush();
+                ProcessServerResponce();
+
+                if (userInput == "9")
+                {
+                    Console.WriteLine("Client shutting down");
+                    break;
+                }
+
             }
             tcpClient.Close();
+            Console.ReadLine();
         }
 
         void ProcessServerResponce()

@@ -8,8 +8,14 @@ using System.Net.Sockets;
 
 namespace SimpleServer
 {
+
+
     class SimpleServer
     {
+        StreamReader reader;
+        StreamWriter writer;
+        NetworkStream stream;
+
         TcpListener tcpListener = null;
         public SimpleServer(string ipAddress, int port)
         {
@@ -35,29 +41,35 @@ namespace SimpleServer
         void SocketMethod(Socket socket)
         {
             string receivedMessage;
-            NetworkStream stream = new NetworkStream(socket);
+            stream = new NetworkStream(socket);
 
-            StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-            StreamWriter writer = new StreamWriter(stream, Encoding.UTF8);
+            reader = new StreamReader(stream, Encoding.UTF8);
+            writer = new StreamWriter(stream, Encoding.UTF8);
 
             writer.WriteLine("Connection Made....");
             writer.Flush();
 
             while ((receivedMessage = reader.ReadLine()) != null)
             {
-                string input = null;
-                GetReturnMessage(input);
-                if (input == "9")
+                GetReturnMessage(receivedMessage);
+                if (receivedMessage == "9")
                 {
+                    writer.WriteLine("Server shutting downs");
+                    writer.Flush();
                     break;
                 }
+
             }
             socket.Close();
         }
 
         void GetReturnMessage(string Code)
         {
-
+            if (Code == "8")
+            {
+                writer.WriteLine("Good Bye .......");
+                writer.Flush();
+            }
         }
 
     }
