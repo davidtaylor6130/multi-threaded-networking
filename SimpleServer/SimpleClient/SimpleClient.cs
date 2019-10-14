@@ -10,16 +10,14 @@ namespace SimpleClient
 {
     class SimpleClient
     {
-        TcpClient tcpClient;
-        NetworkStream stream;
-        StreamWriter writer;
-        StreamReader reader;
+        private TcpClient tcpClient;
+        private NetworkStream stream;
+        private StreamWriter writer;
+        private StreamReader reader;
 
         public SimpleClient()
         {
-    
-               tcpClient = new TcpClient();
-            
+               tcpClient = new TcpClient();   
         }
 
         public bool Connect(string ipAddress, int port)
@@ -42,7 +40,6 @@ namespace SimpleClient
         public void Run()
         {
             string userInput;
-            ProcessServerResponce();
             while ((userInput = Console.ReadLine()) != null)
             {
                 writer.WriteLine(userInput); // < -- stoped here

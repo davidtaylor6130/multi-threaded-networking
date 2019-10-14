@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -9,18 +8,17 @@ using System.Net.Sockets;
 namespace SimpleServer
 {
 
-
     class SimpleServer
     {
         StreamReader reader;
         StreamWriter writer;
         NetworkStream stream;
 
-        TcpListener tcpListener = null;
+        private TcpListener tcpListener = null;
+
         public SimpleServer(string ipAddress, int port)
         {
             tcpListener = new TcpListener(IPAddress.Parse(ipAddress), port);
-
         }
 
         public void Start()
@@ -94,8 +92,12 @@ namespace SimpleServer
                     ServerLog("9 Has Been Pressed");
                     break;
 
-                    // <-------------------------------------COMMANDS SECTION----------------------------------->
+                // <-------------------------------------COMMANDS SECTION----------------------------------->
 
+                case "Help":
+                    ServerLog("Comands Are 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , Help , Shut Down , Clear ServerLog");
+                    break;
+                    
                 case "Shut Down":
                     ServerLog("Server Is Shutting itself down Now");
                     break;

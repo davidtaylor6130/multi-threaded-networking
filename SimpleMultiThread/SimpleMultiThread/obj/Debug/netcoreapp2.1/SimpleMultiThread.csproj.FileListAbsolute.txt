@@ -1,0 +1,11 @@
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\bin\Debug\netcoreapp2.1\SimpleMultiThread.deps.json
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\bin\Debug\netcoreapp2.1\SimpleMultiThread.runtimeconfig.json
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\bin\Debug\netcoreapp2.1\SimpleMultiThread.runtimeconfig.dev.json
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\bin\Debug\netcoreapp2.1\SimpleMultiThread.dll
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\bin\Debug\netcoreapp2.1\SimpleMultiThread.pdb
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\obj\Debug\netcoreapp2.1\SimpleMultiThread.csprojAssemblyReference.cache
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\obj\Debug\netcoreapp2.1\SimpleMultiThread.csproj.CoreCompileInputs.cache
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\obj\Debug\netcoreapp2.1\SimpleMultiThread.AssemblyInfoInputs.cache
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\obj\Debug\netcoreapp2.1\SimpleMultiThread.AssemblyInfo.cs
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\obj\Debug\netcoreapp2.1\SimpleMultiThread.dll
+C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleMultiThread\SimpleMultiThread\obj\Debug\netcoreapp2.1\SimpleMultiThread.pdb
