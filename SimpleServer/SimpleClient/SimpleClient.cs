@@ -40,6 +40,7 @@ namespace SimpleClient
         public void Run()
         {
             string userInput;
+            ProcessServerResponce();
             while ((userInput = Console.ReadLine()) != null)
             {
                 writer.WriteLine(userInput); // < -- stoped here
