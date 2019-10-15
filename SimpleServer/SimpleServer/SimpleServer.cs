@@ -83,7 +83,7 @@ namespace SimpleServer
 
         void MessageGroup(string input, Client client)
         {
-            client.writer.WriteLine(input + "TEST");
+            client.writer.WriteLine(input);
             client.writer.Flush();
         }
 
