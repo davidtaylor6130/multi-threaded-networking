@@ -66,10 +66,12 @@ namespace SimpleClient
 
         void ProcessServerResponce()
         {
+            string testTemp;
             while (true)
             {
-                Console.WriteLine("Server says: " + reader.ReadLine());
-                if (reader.ReadLine() == "Shut Down")
+                testTemp = reader.ReadLine();
+                Console.WriteLine("Server says: " + testTemp);
+                if (testTemp == "Shut Down")
                 {
                     break;
                 }

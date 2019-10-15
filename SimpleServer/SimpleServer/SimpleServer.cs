@@ -36,7 +36,7 @@ namespace SimpleServer
 
                 Thread t = new Thread(new ParameterizedThreadStart(ClientMethod));
                 t.Start(_clientsTemp);
-
+               
             } while (_clients.Count > 0);
             Stop();
         }
@@ -55,13 +55,22 @@ namespace SimpleServer
             client.writer.WriteLine("Connection Made....");
             client.writer.Flush();
 
-            Thread thread = new Thread(timeRepy);
-            thread.Start();
+            Thread thread = new Thread(new ParameterizedThreadStart(timeRepy));
+            thread.Start(client);
 
             while ((receivedMessage = client.reader.ReadLine()) != null)
             {
-                GetReturnMessage(receivedMessage, client);
-
+                if (receivedMessage[0] == 'p' && receivedMessage[1] == 'u' && receivedMessage[2] == 'b' && receivedMessage[3] == ' ')
+                {
+                    for (int i = 0; i < _clients.Count; i++)
+                    {
+                        MessageGroup(receivedMessage, _clients[i]);
+                    }
+                }
+                else
+                {
+                    GetReturnMessage(receivedMessage, client);
+                }
                 if (receivedMessage == "Shut Down")
                 {
                     break;
@@ -72,68 +81,66 @@ namespace SimpleServer
             _clients.Remove(client);
         }
 
+        void MessageGroup(string input, Client client)
+        {
+            client.writer.WriteLine(input + "TEST");
+            client.writer.Flush();
+        }
+
         void GetReturnMessage(string input, Client client)
         {
 
-            if (input[0] == 'p' && input[1] == 'u' && input[2] == 'b' && input[3] == ' ' )
-            {
-                for (int i = 0; i < _clients.Count; i++)
+                switch (input)
                 {
-                    _clients[i].writer.Flush();
-                    _clients[i].writer.Write("public anoncement" , input);
-                    _clients[i].writer.Flush();
-                }
-            }
-            switch (input)
-            {
-                case "1":
-                    ServerLog("1 Has Been Pressed", client);
-                    break;
-                case "2":
-                    ServerLog("2 Has Been Pressed", client);
-                    break;
-                case "3":
-                    ServerLog("3 Has Been Pressed", client);
-                    break;
-                case "4":
-                    ServerLog("4 Has Been Pressed", client);
-                    break;
-                case "5":
-                    ServerLog("5 Has Been Pressed", client);
-                    break;
-                case "6":
-                    ServerLog("6 Has Been Pressed", client);
-                    break;
-                case "7":
-                    ServerLog("7 Has Been Pressed", client);
-                    break;
-                case "8":
-                    ServerLog("8 Has Been Pressed", client);
-                    break;
-                case "9":
-                    ServerLog("9 Has Been Pressed", client);
-                    break;
-
-                // <-------------------------------------COMMANDS SECTION----------------------------------->
-
-                case "Help":
-                    ServerLog("Comands Are 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , Help , Shut Down , Clear ServerLog", client);
-                    break;
-                    
-                case "Shut Down":
-                    ServerLog("Server Is Shutting itself down Now", client);
-                    break;
-
-                case "Clear ServerLog":
-                    Console.Clear();
-                    ServerLog("Logs have been cleared", client);
-                    break;
-
-                default :
-                    ServerLog("Error With Transmittion / Exixuting command", client);
+                    case "1":
+                        ServerLog("1 Has Been Pressed", client);
+                        break;
+                    case "2":
+                        ServerLog("2 Has Been Pressed", client);
+                        break;
+                    case "3":
+                        ServerLog("3 Has Been Pressed", client);
+                        break;
+                    case "4":
+                        ServerLog("4 Has Been Pressed", client);
+                        break;
+                    case "5":
+                        ServerLog("5 Has Been Pressed", client);
+                        break;
+                    case "6":
+                        ServerLog("6 Has Been Pressed", client);
+                        break;
+                    case "7":
+                        ServerLog("7 Has Been Pressed", client);
+                        break;
+                    case "8":
+                        ServerLog("8 Has Been Pressed", client);
+                        break;
+                    case "9":
+                        ServerLog("9 Has Been Pressed", client);
                         break;
 
-            }
+                    // <-------------------------------------COMMANDS SECTION----------------------------------->
+
+                    case "Help":
+                        ServerLog("Comands Are 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , Help , Shut Down , Clear ServerLog", client);
+                        break;
+
+                    case "Shut Down":
+                        ServerLog("Server Is Shutting itself down Now", client);
+                        break;
+
+                    case "Clear ServerLog":
+                        Console.Clear();
+                        ServerLog("Logs have been cleared", client);
+                        break;
+
+                    default:
+                        ServerLog("Error With Transmittion / Exixuting command", client);
+                        break;
+
+                }
+            
         }
 
         void ServerLog(string input, Client client)
@@ -143,12 +150,13 @@ namespace SimpleServer
             client.writer.Flush();
         }
 
-        void timeRepy()
+        void timeRepy(object obj)
         {
+            Client client = (Client)obj;
             for (int i = 0; i < 10; i++)
             {
-                _clients[0].writer.WriteLine("test");
-                _clients[0].writer.Flush();
+                client.writer.WriteLine("test");
+                client.writer.Flush();
             }
         }
     }
