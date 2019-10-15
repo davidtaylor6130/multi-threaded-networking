@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace SimpleClient
 {
@@ -40,19 +41,24 @@ namespace SimpleClient
         public void Run()
         {
             string userInput;
-            ProcessServerResponce();
+
+            Thread thread = new Thread(ProcessServerResponce);
+            thread.Start();
+
             while ((userInput = Console.ReadLine()) != null)
             {
                 writer.WriteLine(userInput); // < -- stoped here
                 writer.Flush();
-                ProcessServerResponce();
 
                 if (userInput == "Shut Down")
                 {
                     Console.WriteLine("Client shutting down");
                     break;
                 }
-
+                if (reader.Peek() != -1)
+                {
+                    Console.WriteLine("Server says: " + reader.ReadLine());
+                }
             }
             tcpClient.Close();
             Console.ReadLine();
@@ -60,8 +66,15 @@ namespace SimpleClient
 
         void ProcessServerResponce()
         {
-            Console.WriteLine("Server says: " + reader.ReadLine());
-            Console.WriteLine();
+            while (true)
+            {
+                Console.WriteLine("Server says: " + reader.ReadLine());
+                if (reader.ReadLine() == "Shut Down")
+                {
+                    break;
+                }
+            }
+
         }
     }
 }

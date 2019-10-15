@@ -55,6 +55,9 @@ namespace SimpleServer
             client.writer.WriteLine("Connection Made....");
             client.writer.Flush();
 
+            Thread thread = new Thread(timeRepy);
+            thread.Start();
+
             while ((receivedMessage = client.reader.ReadLine()) != null)
             {
                 GetReturnMessage(receivedMessage, client);
@@ -140,6 +143,14 @@ namespace SimpleServer
             client.writer.Flush();
         }
 
+        void timeRepy()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                _clients[0].writer.WriteLine("test");
+                _clients[0].writer.Flush();
+            }
+        }
     }
 
     class Client
