@@ -18,11 +18,21 @@ namespace SimpleServer
 
         public TcpListener tcpListener = null;
 
+        //-------------------------------------------------------------------------------------------------//
+        //--Creates a new tcpListerner to listen in for incoming trafic to the passed in ipadress and port-//
+        //-------------------------------------------------------------------------------------------------//
+
         public SimpleServer(string ipAddress, int port)
         {
             tcpListener = new TcpListener(IPAddress.Parse(ipAddress), port);
             _clients = new List<Client>();
         }
+
+        //-------------------------------------------------------------------------------------------------//
+        //---------Thre Start Function creates a new client class and saves it to the _clients List--------//
+        //---Once the conection is made the tread is started and clients the current client has been pass--//
+        //--------------------------------------- into the thread -----------------------------------------//
+        //-------------------------------------------------------------------------------------------------//
 
         public void Start()
         {
@@ -46,6 +56,10 @@ namespace SimpleServer
             tcpListener.Stop();
         }
 
+        //-------------------------------------------------------------------------------------------------//
+        //-The Client Method is independent per client running on multiple threads this allow for multiple-//
+        //-------------------- Clients to be connected and communicate with the server --------------------//
+        //-------------------------------------------------------------------------------------------------//
 
         public void ClientMethod(object obj)
         {
@@ -55,22 +69,10 @@ namespace SimpleServer
             client.writer.WriteLine("Connection Made....");
             client.writer.Flush();
 
-            Thread thread = new Thread(new ParameterizedThreadStart(timeRepy));
-            thread.Start(client);
-
             while ((receivedMessage = client.reader.ReadLine()) != null)
             {
-                if (receivedMessage[0] == 'p' && receivedMessage[1] == 'u' && receivedMessage[2] == 'b' && receivedMessage[3] == ' ')
-                {
-                    for (int i = 0; i < _clients.Count; i++)
-                    {
-                        MessageGroup(receivedMessage, _clients[i]);
-                    }
-                }
-                else
-                {
                     GetReturnMessage(receivedMessage, client);
-                }
+
                 if (receivedMessage == "Shut Down")
                 {
                     break;
@@ -81,16 +83,49 @@ namespace SimpleServer
             _clients.Remove(client);
         }
 
-        void MessageGroup(string input, Client client)
+        //-------------------------------------------------------------------------------------------------//
+        //---The MessageGroup function sends a message to everyone in the server apart from who sent it----//
+        //-------------------------------------------------------------------------------------------------//
+
+        void MessageGroup(string input, Client Sender)
         {
-            client.writer.WriteLine(input);
-            client.writer.Flush();
+            for (int i = 0; i < _clients.Count; i++)
+            {
+                if (Sender.NameOfUser != _clients[i].NameOfUser)
+                {
+                    _clients[i].writer.WriteLine(Sender.NameOfUser + ": " + input);
+                    _clients[i].writer.Flush();
+                }
+            }
         }
+
+        //-------------------------------------------------------------------------------------------------//
+        //---GetReturnMessage Function is the brains of the server this gives the output from the input----//
+        //--------------------------of the users this also calles server log-------------------------------//
+        //-------------------------------------------------------------------------------------------------//
 
         void GetReturnMessage(string input, Client client)
         {
-
-                switch (input)
+            if (input[0] == 'p' && input[1] == 'u' && input[2] == 'b' && input[3] == ' ')
+            {
+                //-- input.Replace() removes the command keywords  --//
+                input = input.Replace("pub ", "");
+                MessageGroup(input, client);
+            }
+            else if (input[0] == 'n' && input[1] == 'a' && input[2] == 'm' && input[3] == 'e')
+            {
+                //-- input.Replace() removes the command keywords  --//
+                input = input.Replace("name", "");
+                client.NameOfUser = input;
+            }
+            else if (input[0] == 'g' && input[1] == 'a' && input[2] == 'm' && input[3] == 'e')
+            {
+                input = input.Replace("game", "");
+                ServerLog("Game Has Been Selected", client);
+            }
+            else
+            {
+                switch (input) // logistic of Inputs
                 {
                     case "1":
                         ServerLog("1 Has Been Pressed", client);
@@ -140,26 +175,27 @@ namespace SimpleServer
                         break;
 
                 }
-            
+            }
         }
+
+        //-------------------------------------------------------------------------------------------------//
+        //--I Created the ServerLog function to allow a report of all actvities on the chat room for mods--//
+        //-------------------------------------------------------------------------------------------------//
 
         void ServerLog(string input, Client client)
         {
-            Console.WriteLine("Message: " + input + " Message Sent At: " + DateTime.Now.ToString("h:mm:ss tt"));
-            client.writer.WriteLine(input);
+            Console.WriteLine("Message: " + input + " Message Sent At: " + DateTime.Now.ToString("h:mm:ss tt")); //This allows a server log to be created
+            client.writer.WriteLine("Server says: " + input);
             client.writer.Flush();
         }
 
-        void timeRepy(object obj)
-        {
-            Client client = (Client)obj;
-            for (int i = 0; i < 10; i++)
-            {
-                client.writer.WriteLine("test");
-                client.writer.Flush();
-            }
-        }
     }
+
+
+    //-------------------------------------------------------------------------------------------------//
+    //--The Client Class is used to have information about the client that is saved like there reader--//
+    //-writer and their network stream i have also added a name to each client for easy identification-//
+    //-------------------------------------------------------------------------------------------------//
 
     class Client
     {
@@ -167,9 +203,11 @@ namespace SimpleServer
         public NetworkStream stream;
         public StreamReader reader { get; private set; }
         public StreamWriter writer { get; private set; }
+        public string NameOfUser;
 
         public Client(Socket socketPassIn)
         {
+            NameOfUser = null;
             socket = socketPassIn;
             stream = new NetworkStream(socketPassIn);
             reader = new StreamReader(stream, Encoding.UTF8);
