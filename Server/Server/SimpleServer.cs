@@ -129,10 +129,41 @@ namespace SimpleServer
             }
             else if (inputtemp[0] == 'n' && inputtemp[1] == 'a' && inputtemp[2] == 'm' && inputtemp[3] == 'e')
             {
+                bool newName = false;
                 input = input.Substring(5);
-                client.NameOfUser = input;
-                ServerLog("Thank You For Entering Your Name!", client);
-                ServerLog("Enjoy WhatsChat", client);
+                if (input != client.NameOfUser)
+                {
+                    client.NameOfUser = input;
+                    newName = true;
+                }
+                string UsersOnline = "on|";
+                for (int i = 0; i < _clients.Count; i++)
+                {
+                    if (_clients[i].ServerLocation == client.ServerLocation)
+                    {
+                        UsersOnline += _clients[i].NameOfUser + "|";
+                    }
+                }
+                for (int j = 0; j < _clients.Count; j++)
+                {
+                    _clients[j].writer.WriteLine(UsersOnline);
+                    if (newName == true)
+                    {
+                        if (_clients[j].NameOfUser == client.NameOfUser)
+                        {
+                            ServerLog("----------------------------Nick Name Changed----------------------------", _clients[j]);
+                        }
+                        else
+                        {
+                            ServerLog("-----------------A New User Has Joined The Channel------------------", _clients[j]);
+                        }
+                    }
+                    else
+                    {
+                        ServerLog("un", _clients[j]);
+                    }
+                }
+
             }
             else if (client.NameOfUser == null)
             {
@@ -215,7 +246,7 @@ namespace SimpleServer
         void ServerLog(string input, Client client)
         {
             Console.WriteLine("Message: " + input + " Message Sent At: " + DateTime.Now.ToString("h:mm:ss tt")); //This allows a server log to be created
-            client.writer.WriteLine("Server says: " + input);
+            client.writer.WriteLine(input);
             client.writer.Flush();
         }
 

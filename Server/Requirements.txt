@@ -1,0 +1,32 @@
+﻿
+-----------------------------------------------
+----------------CHAT CLIENT-------------------- 40%
+-----------------------------------------------
+
+	BASIC FEATURES:
+
+		Client-Server commands ✓
+		TCP/IP protocal to comunicate ✓
+		Client-Client Messaging ✓
+		Use Multiple Threads ✓
+		Managing Acsess to shared resources ✓
+
+	ADVANCED FEATURES:
+
+		Nickname System ✓(can change your name)
+		Direct Messaging to Client 
+		Message Validation 
+		Working GUI ✓
+
+		GAME:
+			rock paper scissors 
+			HangMan 
+			Higher or Lower 
+
+-----------------------------------------------
+-----------GRAPHICS AND SIMULATION-------------
+-----------------------------------------------
+
+-----------------------------------------------
+--------------------REPORT---------------------
+-----------------------------------------------

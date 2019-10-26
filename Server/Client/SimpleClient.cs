@@ -102,7 +102,14 @@ namespace SimpleClient
             while (ShutDown == false)
             {
                 testTemp = reader.ReadLine();
-                messageForm.UpdateChatWindow(testTemp);
+                if (testTemp[0] == 'o' && testTemp[1] == 'n' && testTemp[2] == '|')
+                {
+                    messageForm.updateWhosOnline(testTemp);
+                }
+                else
+                {
+                    messageForm.UpdateChatWindow(testTemp);
+                }
             }
         }
     }

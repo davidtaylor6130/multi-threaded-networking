@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientForm));
             this.UserInput = new System.Windows.Forms.RichTextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label1 = new System.Windows.Forms.Label();
+            this.OnlineNamesDisplay = new System.Windows.Forms.RichTextBox();
             this.SelectServer = new System.Windows.Forms.Label();
             this.ServerSelectDropDown = new System.Windows.Forms.ComboBox();
             this.LeaveChat = new System.Windows.Forms.Button();
@@ -66,6 +68,8 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.OnlineNamesDisplay);
             this.splitContainer1.Panel1.Controls.Add(this.SelectServer);
             this.splitContainer1.Panel1.Controls.Add(this.ServerSelectDropDown);
             this.splitContainer1.Panel1.Controls.Add(this.LeaveChat);
@@ -85,9 +89,26 @@
             this.splitContainer1.SplitterDistance = 180;
             this.splitContainer1.TabIndex = 5;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(30, 244);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(111, 19);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Users In Chat";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // OnlineNamesDisplay
+            // 
+            this.OnlineNamesDisplay.Location = new System.Drawing.Point(30, 266);
+            this.OnlineNamesDisplay.Name = "OnlineNamesDisplay";
+            this.OnlineNamesDisplay.Size = new System.Drawing.Size(111, 145);
+            this.OnlineNamesDisplay.TabIndex = 7;
+            this.OnlineNamesDisplay.Text = "Please Enter Name \nto see whos online";
+            // 
             // SelectServer
             // 
-            this.SelectServer.Location = new System.Drawing.Point(29, 195);
+            this.SelectServer.Location = new System.Drawing.Point(29, 193);
             this.SelectServer.Name = "SelectServer";
             this.SelectServer.Size = new System.Drawing.Size(111, 18);
             this.SelectServer.TabIndex = 4;
@@ -109,7 +130,7 @@
             "Game Room 4",
             "Game Room 5",
             "Welcome Room"});
-            this.ServerSelectDropDown.Location = new System.Drawing.Point(30, 216);
+            this.ServerSelectDropDown.Location = new System.Drawing.Point(30, 214);
             this.ServerSelectDropDown.Name = "ServerSelectDropDown";
             this.ServerSelectDropDown.Size = new System.Drawing.Size(111, 23);
             this.ServerSelectDropDown.TabIndex = 4;
@@ -156,6 +177,7 @@
             this.EnterChat.TabIndex = 2;
             this.EnterChat.Text = "Enter Chat";
             this.EnterChat.UseVisualStyleBackColor = true;
+            this.EnterChat.Click += new System.EventHandler(this.EnterChat_Click);
             // 
             // NameButton
             // 
@@ -228,5 +250,7 @@
         private System.Windows.Forms.Button LeaveChat;
         private System.Windows.Forms.ComboBox ServerSelectDropDown;
         private System.Windows.Forms.Label SelectServer;
+        private System.Windows.Forms.Label label1;
+        public System.Windows.Forms.RichTextBox OnlineNamesDisplay;
     }
 }
