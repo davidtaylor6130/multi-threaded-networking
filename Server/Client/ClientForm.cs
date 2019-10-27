@@ -65,9 +65,12 @@ namespace Client
             }
             else
             {
-                serverInput.Text += message + Environment.NewLine;
-                serverInput.SelectionStart = serverInput.Text.Length;
-                serverInput.ScrollToCaret();
+                if (message != "un")
+                {
+                    serverInput.Text += message + Environment.NewLine;
+                    serverInput.SelectionStart = serverInput.Text.Length;
+                    serverInput.ScrollToCaret();
+                }
             }
         }
 
@@ -175,15 +178,11 @@ namespace Client
             }
         }
 
-        private void ServerSelectDropDown_SelectedIndexChanged(object sender, EventArgs e)
-        {
-           simpleclient.SendMessage( ("ssi" + ServerSelectDropDown.SelectedItem.ToString() + "|" + ServerSelectDropDown.SelectedIndex.ToString())); //ssi server selected index
-           LeaveChat.Text = "Leave Channel";
-        }
-
         private void EnterChat_Click(object sender, EventArgs e)
         {
-            simpleclient.InputName(NameLabel.Text);
+            simpleclient.SendMessage(("ssi" + ServerSelectDropDown.SelectedItem.ToString() + "|" + ServerSelectDropDown.SelectedIndex.ToString())); //ssi server selected index
+            LeaveChat.Text = "Leave Channel";
+            //simpleclient.InputName(NameLabel.Text);
         }
     }
 }

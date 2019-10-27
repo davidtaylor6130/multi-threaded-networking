@@ -95,7 +95,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(111, 19);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Users In Chat";
+            this.label1.Text = "Users Online";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // OnlineNamesDisplay
@@ -135,7 +135,6 @@
             this.ServerSelectDropDown.Size = new System.Drawing.Size(111, 23);
             this.ServerSelectDropDown.TabIndex = 4;
             this.ServerSelectDropDown.Text = "Welcome Room";
-            this.ServerSelectDropDown.SelectedIndexChanged += new System.EventHandler(this.ServerSelectDropDown_SelectedIndexChanged);
             // 
             // LeaveChat
             // 

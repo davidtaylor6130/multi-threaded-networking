@@ -11,11 +11,7 @@ namespace SimpleServer
 
     class SimpleServer
     {
-        StreamReader reader;
-        StreamWriter writer;
-        NetworkStream stream;
         List<Client> _clients;
-
         public TcpListener tcpListener = null;
 
         //-------------------------------------------------------------------------------------------------//
@@ -86,6 +82,7 @@ namespace SimpleServer
 
         //-------------------------------------------------------------------------------------------------//
         //---The MessageGroup function sends a message to everyone in the server apart from who sent it----//
+        //--Loops through all the clients and sends them the message (basicly forwarding the message on)---//
         //-------------------------------------------------------------------------------------------------//
 
         void MessageGroup(string input, Client Sender)
@@ -107,26 +104,38 @@ namespace SimpleServer
 
         void GetReturnMessage(string input, Client client)
         {
+
+        //------------if its an empty message it sents it to 4 char long to prevent null pointers----------//    
             if (input == "")
             {
                 input = "    ";
             }
-                string inputtemp = input.ToLower();
-                string tempString = "";
+            string inputtemp = input.ToLower();
+            string tempString = "";
+
+        //--------ssi Server Select Input sets the new server input to decide what chat you are in---------//
             if (inputtemp[0] == 's' && inputtemp[1] == 's' && inputtemp[2] == 'i') //server selected index
             {
-                input = input.Substring(3);
-                for (int i = 0; i < input.Length; i++)
+                if (client.NameOfUser != "New User") //checks if the user has enterd a name
                 {
-                    if (input[i] == '|')
+                    input = input.Substring(3); //takes of the key phrase of ssi
+                    for (int i = 0; i < input.Length; i++)
                     {
-                        tempString = input.Remove(i, input.Length - i);
-                        input = input.Substring(i + 1);
+                        if (input[i] == '|')
+                        {
+                            tempString = input.Remove(i, input.Length - i); //separates the input 
+                            input = input.Substring(i + 1);
+                        }
                     }
+                    client.ServerLocation = int.Parse(input); //parses the string input to an int data form
+                    ServerLog("You Have Been Switched to " + tempString, client);
                 }
-                client.ServerLocation = int.Parse(input);
-                ServerLog("You Have Been Switched to " + tempString, client);
+                else
+                {
+                    ServerLog("Please Enter A Name", client); //error message if name isnt set to prevent glitches
+                }
             }
+        //------------------------------------Area for changing the name-----------------------------------//
             else if (inputtemp[0] == 'n' && inputtemp[1] == 'a' && inputtemp[2] == 'm' && inputtemp[3] == 'e')
             {
                 bool newName = false;
@@ -139,10 +148,7 @@ namespace SimpleServer
                 string UsersOnline = "on|";
                 for (int i = 0; i < _clients.Count; i++)
                 {
-                    if (_clients[i].ServerLocation == client.ServerLocation)
-                    {
-                        UsersOnline += _clients[i].NameOfUser + "|";
-                    }
+                    UsersOnline += _clients[i].NameOfUser + "|";
                 }
                 for (int j = 0; j < _clients.Count; j++)
                 {
@@ -165,11 +171,12 @@ namespace SimpleServer
                 }
 
             }
-            else if (client.NameOfUser == null)
+        //--------------------------------------------Error Messages---------------------------------------//
+            else if (client.NameOfUser == "New User")
             {
                 ServerLog("To Message Anyone PLease Enter a name on the top left box:", client);
             }
-            else if (client.NameOfUser != null)
+            else if (client.NameOfUser != "New User")
             {
                 if (inputtemp[0] == 's' && inputtemp[1] == 'e' && inputtemp[2] == 'r' && inputtemp[3] == 'v' && inputtemp[4] == 'e' && inputtemp[5] == 'r')
                 {
@@ -231,6 +238,7 @@ namespace SimpleServer
                     MessageGroup(input, client);
                 }
             }
+        //------------------------------------------Server Commands----------------------------------------//
             else
             {
                 ServerLog("enter a message", client);
@@ -269,7 +277,7 @@ namespace SimpleServer
 
         public Client(Socket socketPassIn)
         {
-            NameOfUser = null;
+            NameOfUser = "New User";
             ServerLocation = 10;
             socket = socketPassIn;
             stream = new NetworkStream(socketPassIn);
