@@ -43,6 +43,7 @@
             this.NameInput = new System.Windows.Forms.RichTextBox();
             this.EnterButton = new System.Windows.Forms.Button();
             this.serverInput = new System.Windows.Forms.RichTextBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -167,6 +168,7 @@
             this.UserIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.UserIcon.TabIndex = 4;
             this.UserIcon.TabStop = false;
+            this.UserIcon.Click += new System.EventHandler(this.UserIcon_Click);
             // 
             // EnterChat
             // 
@@ -216,6 +218,10 @@
             this.serverInput.TabIndex = 3;
             this.serverInput.Text = "";
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -251,5 +257,6 @@
         private System.Windows.Forms.Label SelectServer;
         private System.Windows.Forms.Label label1;
         public System.Windows.Forms.RichTextBox OnlineNamesDisplay;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

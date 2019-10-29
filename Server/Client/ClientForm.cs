@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SimpleClient;
-using System.Threading;
 
 namespace Client
 {
-
     public partial class ClientForm : Form
-    {
+    { 
+
         public SimpleClient.SimpleClient simpleclient;
 
         private delegate void UpdateChatWindowDelegate(string message);
@@ -183,6 +174,15 @@ namespace Client
             simpleclient.SendMessage(("ssi" + ServerSelectDropDown.SelectedItem.ToString() + "|" + ServerSelectDropDown.SelectedIndex.ToString())); //ssi server selected index
             LeaveChat.Text = "Leave Channel";
             //simpleclient.InputName(NameLabel.Text);
+        }
+
+        
+        private void UserIcon_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                serverInput.Text = "worked";
+            }
         }
     }
 }

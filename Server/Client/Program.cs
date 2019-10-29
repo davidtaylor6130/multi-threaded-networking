@@ -4,6 +4,7 @@ namespace SimpleClient
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             SimpleClient client = new SimpleClient();
