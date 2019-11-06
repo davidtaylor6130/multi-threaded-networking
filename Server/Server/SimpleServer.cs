@@ -5,6 +5,8 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
+using Packets;
 
 namespace SimpleServer
 {
@@ -13,6 +15,8 @@ namespace SimpleServer
     {
         List<Client> _clients;
         public TcpListener tcpListener = null;
+        MemoryStream ms;
+        BinaryFormatter bf;
 
         //-------------------------------------------------------------------------------------------------//
         //--Creates a new tcpListerner to listen in for incoming trafic to the passed in ipadress and port-//
@@ -35,6 +39,9 @@ namespace SimpleServer
             tcpListener.Start();
             do
             {
+                ms = new MemoryStream();
+                bf = new BinaryFormatter();
+
                 Socket socket = tcpListener.AcceptSocket();
                 Console.WriteLine("Connection Established");
                 Client _clientsTemp = new Client(socket);
@@ -60,15 +67,21 @@ namespace SimpleServer
         public void ClientMethod(object obj)
         {
             Client client = (Client)obj;
-            string receivedMessage;
+            string receivedMessage = "hi";
+            int noOfIncomingBytes;
 
-            client.writer.WriteLine("Connection Made....");
-            client.writer.Flush();
-
-            while ((receivedMessage = client.reader.ReadLine()) != null)
+            while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
             {
-
-                GetReturnMessage(receivedMessage, client);
+                byte[] buffer = client._reader.ReadBytes(noOfIncomingBytes);
+                ms.SetLength(0);
+                ms.Capacity = 0;
+                ms.Write(buffer, 0, noOfIncomingBytes);
+                ms.Position = 0;
+                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
+                Packet packet = bf.Deserialize(ms) as Packet;
+                ms.SetLength(0);
+                ms.Capacity = 0;
+                GetReturnMessage(packet, client);
 
                 if (receivedMessage == "Shut Down")
                 {
@@ -85,14 +98,13 @@ namespace SimpleServer
         //--Loops through all the clients and sends them the message (basicly forwarding the message on)---//
         //-------------------------------------------------------------------------------------------------//
 
-        void MessageGroup(string input, Client Sender)
+        void MessageGroup(Packet input, Client Sender)
         {
             for (int i = 0; i < _clients.Count; i++)
             {
                 if (Sender.ServerLocation == _clients[i].ServerLocation)
                 {
-                    _clients[i].writer.WriteLine(Sender.NameOfUser + ": " + input);
-                    _clients[i].writer.Flush();
+                    _clients[i].Send(input);
                 }
             }
         }
@@ -102,87 +114,81 @@ namespace SimpleServer
         //--------------------------of the users this also calles server log-------------------------------//
         //-------------------------------------------------------------------------------------------------//
 
-        void GetReturnMessage(string input, Client client)
+        void GetReturnMessage(Packet packetInput, Client client)
         {
 
-        //------------if its an empty message it sents it to 4 char long to prevent null pointers----------//    
-            if (input == "")
-            {
-                input = "    ";
-            }
-            string inputtemp = input.ToLower();
-            string tempString = "";
+            //------------if its an empty message it sents it to 4 char long to prevent null pointers----------//    
 
-        //--------ssi Server Select Input sets the new server input to decide what chat you are in---------//
-            if (inputtemp[0] == 's' && inputtemp[1] == 's' && inputtemp[2] == 'i') //server selected index
+            //ServerLog(packetInput.Type, client);
+
+
+            string input = "";
+
+
+
+            switch (packetInput.Type)
             {
-                if (client.NameOfUser != "New User") //checks if the user has enterd a name
-                {
-                    input = input.Substring(3); //takes of the key phrase of ssi
-                    for (int i = 0; i < input.Length; i++)
+                case PacketType.ServerLocation:
+
+                    ServerLocationPacket ServerLocation = (ServerLocationPacket)packetInput;
+
+                    if (client.NameOfUser != "New User") //checks if the user has enterd a name
                     {
-                        if (input[i] == '|')
-                        {
-                            tempString = input.Remove(i, input.Length - i); //separates the input 
-                            input = input.Substring(i + 1);
-                        }
-                    }
-                    client.ServerLocation = int.Parse(input); //parses the string input to an int data form
-                    ServerLog("You Have Been Switched to " + tempString, client);
-                }
-                else
-                {
-                    ServerLog("Please Enter A Name", client); //error message if name isnt set to prevent glitches
-                }
-            }
-        //------------------------------------Area for changing the name-----------------------------------//
-            else if (inputtemp[0] == 'n' && inputtemp[1] == 'a' && inputtemp[2] == 'm' && inputtemp[3] == 'e')
-            {
-                bool newName = false;
-                input = input.Substring(5);
-                if (input != client.NameOfUser)
-                {
-                    client.NameOfUser = input;
-                    newName = true;
-                }
-                string UsersOnline = "on|";
-                for (int i = 0; i < _clients.Count; i++)
-                {
-                    UsersOnline += _clients[i].NameOfUser + "|";
-                }
-                for (int j = 0; j < _clients.Count; j++)
-                {
-                    _clients[j].writer.WriteLine(UsersOnline);
-                    if (newName == true)
-                    {
-                        if (_clients[j].NameOfUser == client.NameOfUser)
-                        {
-                            ServerLog("----------------------------Nick Name Changed----------------------------", _clients[j]);
-                        }
-                        else
-                        {
-                            ServerLog("-----------------A New User Has Joined The Channel------------------", _clients[j]);
-                        }
+                        client.ServerLocation = ServerLocation.serverLocation; //parses the string input to an int data form
+                        ServerLog("You Have Been Switched to " + ServerLocation.ServerName, client);
                     }
                     else
                     {
-                        ServerLog("un", _clients[j]);
+                        ServerLog("Please Enter A Name", client); //error message if name isnt set to prevent glitches
                     }
-                }
 
-            }
-        //--------------------------------------------Error Messages---------------------------------------//
-            else if (client.NameOfUser == "New User")
-            {
-                ServerLog("To Message Anyone PLease Enter a name on the top left box:", client);
-            }
-            else if (client.NameOfUser != "New User")
-            {
-                if (inputtemp[0] == 's' && inputtemp[1] == 'e' && inputtemp[2] == 'r' && inputtemp[3] == 'v' && inputtemp[4] == 'e' && inputtemp[5] == 'r')
-                {
+                    break;
+
+                case PacketType.NickName:
+
+                    NickNamePacket NickName = (NickNamePacket)packetInput;
+                    bool newName = false;
+
+                    if (input != client.NameOfUser)
+                    {
+                        client.NameOfUser = NickName.Name[0];
+                        newName = true;
+                    }
+
+                    NickNamePacket SendPacket = new NickNamePacket(client.NameOfUser, 0);
+
+                    for (int i = 0; i < _clients.Count; i++)
+                    {
+                        SendPacket.Name[i] = _clients[i].NameOfUser;
+                    }
+
+                    for (int j = 0; j < _clients.Count; j++)
+                    {
+                        _clients[j].Send(SendPacket);
+                        if (newName == true)
+                        {
+                            if (_clients[j].NameOfUser == client.NameOfUser)
+                            {
+                                ServerLog("----------------------------Nick Name Changed----------------------------", _clients[j]);
+                            }
+                            else
+                            {
+                                ServerLog("-----------------A New User Has Joined The Channel------------------", _clients[j]);
+                            }
+                        }
+                        else
+                        {
+                            ServerLog("un", _clients[j]);
+                        }
+                    }
+
+                    break;
+
+                case PacketType.ServerCommand:
+
                     //-- input.Replace() removes the command keywords  --//
-                    inputtemp = inputtemp.Substring(7);
-                    switch (inputtemp) // logistic of Inputs
+                    input = input.Substring(7);
+                    switch (input) // logistic of Inputs
                     {
                         case "1":
                             ServerLog("1 Has Been Pressed", client);
@@ -232,16 +238,11 @@ namespace SimpleServer
                             break;
 
                     }
-                }
-                else
-                {
-                    MessageGroup(input, client);
-                }
-            }
-        //------------------------------------------Server Commands----------------------------------------//
-            else
-            {
-                ServerLog("enter a message", client);
+                    break;
+
+                case PacketType.ChatMessage:
+                    MessageGroup(packetInput, client);
+                    break;
             }
             
 
@@ -254,12 +255,10 @@ namespace SimpleServer
         void ServerLog(string input, Client client)
         {
             Console.WriteLine("Message: " + input + " Message Sent At: " + DateTime.Now.ToString("h:mm:ss tt")); //This allows a server log to be created
-            client.writer.WriteLine(input);
-            client.writer.Flush();
+            ServerMessagePacket packet = new ServerMessagePacket(input);
+            client.Send(packet);
         }
-
     }
-
 
     //-------------------------------------------------------------------------------------------------//
     //--The Client Class is used to have information about the client that is saved like there reader--//
@@ -272,6 +271,12 @@ namespace SimpleServer
         public NetworkStream stream;
         public StreamReader reader { get; private set; }
         public StreamWriter writer { get; private set; }
+
+        public BinaryReader _reader { get; private set; }
+        public BinaryWriter _writer { get; private set; }
+        public MemoryStream ms { get; private set; }
+        public BinaryFormatter bf { get; private set; }
+
         public string NameOfUser;
         public int ServerLocation;
 
@@ -283,6 +288,24 @@ namespace SimpleServer
             stream = new NetworkStream(socketPassIn);
             reader = new StreamReader(stream, Encoding.UTF8);
             writer = new StreamWriter(stream, Encoding.UTF8);
+
+            _reader = new BinaryReader(stream, Encoding.UTF8);
+            _writer = new BinaryWriter(stream, Encoding.UTF8);
+            ms = new MemoryStream();
+            bf = new BinaryFormatter();
+        }
+
+        public void Send(Packet data)
+        {
+            ms.SetLength(0);
+            ms.Capacity = 0;
+            bf.Serialize(ms, data);
+            ms.Position = 0;
+            byte[] buffer = ms.GetBuffer();
+
+            _writer.Write(buffer.Length);
+            _writer.Write(buffer);
+            _writer.Flush();
         }
 
         public void Close()

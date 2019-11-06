@@ -51,5 +51,6 @@
     <None Include="misc\App.config" />
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\Packets\Packets.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

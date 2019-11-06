@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
 using Client;
+using Packets;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SimpleClient
 {
@@ -26,6 +26,11 @@ namespace SimpleClient
         private StreamReader reader;
         private Thread thread;
         private ClientForm messageForm;
+
+        private BinaryWriter _writer;
+        private BinaryReader _reader;
+        private MemoryStream ms;
+        private BinaryFormatter bf;
 
         //-------------------------------------------------------------------------------------------------//
         //------------------Simple Client creates a new tcpClient for the client to use---------------------//
@@ -50,6 +55,11 @@ namespace SimpleClient
                 stream = tcpClient.GetStream();
                 reader = new StreamReader(stream, Encoding.UTF8);
                 writer = new StreamWriter(stream, Encoding.UTF8);
+
+                _writer = new BinaryWriter(stream, Encoding.UTF8);
+                _reader = new BinaryReader(stream, Encoding.UTF8);
+                ms = new MemoryStream();
+                bf = new BinaryFormatter();
 
                 Application.Run(messageForm);
             }
@@ -92,24 +102,62 @@ namespace SimpleClient
             writer.Flush();
         }
 
+        public void Send(Packet data)
+        {
+            ms.SetLength(0);
+            ms.Capacity = 0;
+            bf.Serialize(ms,data);
+            ms.Position = 0;
+            byte[] buffer = ms.GetBuffer();
+
+            _writer.Write(buffer.Length);
+            _writer.Write(buffer);
+            _writer.Flush();
+        }
+
         //-------------------------------------------------------------------------------------------------//
         //----ProsessServerResponce Handels the unexspected output from the server like public messages----// 
         //-------------------------------------------------------------------------------------------------//
 
         void ProcessServerResponce()
         {
-            string testTemp;
-            while (ShutDown == false)
+            int noOfIncomingBytes = 0;
+            while ((noOfIncomingBytes = _reader.ReadInt32()) != 0)
             {
-                testTemp = reader.ReadLine();
-                if (testTemp[0] == 'o' && testTemp[1] == 'n' && testTemp[2] == '|')
+                byte[] buffer = _reader.ReadBytes(noOfIncomingBytes);
+                ms.Write(buffer, 0, noOfIncomingBytes);
+                ms.Position = 0;
+                //ms.Seek(0, SeekOrigin.Begin);
+                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
+                Packet packet = bf.Deserialize(ms) as Packet;
+                ms.SetLength(0);
+                ms.Capacity = 0;
+
+                switch (packet.Type)
                 {
-                    messageForm.updateWhosOnline(testTemp);
+                    case PacketType.ChatMessage:
+                        ChatMessagePacket packetChatMessage = (ChatMessagePacket)packet;
+                        messageForm.UpdateChatWindow(packetChatMessage.message);
+                        break;
+                    case PacketType.DirectMessage:
+                        break;
+                    case PacketType.NickName:
+                        NickNamePacket packetUserList = (NickNamePacket)packet;
+                        messageForm.updateWhosOnline(packetUserList);
+                        break;
+                    case PacketType.ServerCommand:
+                        break;
+                    case PacketType.ServerLocation:
+                        break;
+                    case PacketType.ServerMessagePacket:
+                        ServerMessagePacket packetServerMessage = (ServerMessagePacket)packet;
+                        messageForm.UpdateChatWindow(packetServerMessage.message);
+                        break;
+                    default:
+
+                        break;
                 }
-                else
-                {
-                    messageForm.UpdateChatWindow(testTemp);
-                }
+                packet = null;
             }
         }
     }
