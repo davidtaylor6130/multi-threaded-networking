@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection;
+using System.Net;
 
 namespace Packets
 {
@@ -36,7 +37,8 @@ namespace Packets
         ServerLocation,
         DirectMessage,
         ServerCommand,
-        ServerMessagePacket
+        ServerMessagePacket,
+        EndPointPacket
     }
 
     public class Packet
@@ -196,4 +198,27 @@ namespace Packets
         }
     }
 
+    [Serializable]
+    public class EndPointPacket : Packet, ISerializable
+    {
+        public EndPoint endPoint;
+
+        public EndPointPacket(SocketAddress address)
+        {
+            this.Type = PacketType.ServerMessagePacket;
+            this.endPoint = endPoint.Create(address);
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Type", Type);
+            info.AddValue("endPoint", endPoint);
+        }
+
+        public EndPointPacket(SerializationInfo info, StreamingContext context)
+        {
+            Type = (PacketType)info.GetValue("Type", typeof(PacketType));
+            endPoint = (EndPoint)info.GetValue("endPoint", typeof(EndPoint));
+        }
+    }
 }

@@ -17,13 +17,17 @@ namespace SimpleServer
         public TcpListener tcpListener = null;
         MemoryStream ms;
         BinaryFormatter bf;
+        string ipAddress;
+        int port;
 
         //-------------------------------------------------------------------------------------------------//
         //--Creates a new tcpListerner to listen in for incoming trafic to the passed in ipadress and port-//
         //-------------------------------------------------------------------------------------------------//
 
-        public SimpleServer(string ipAddress, int port)
+        public SimpleServer(string ipAddressPassIn, int portPassIn)
         {
+            ipAddress = ipAddressPassIn;
+            port = portPassIn;
             tcpListener = new TcpListener(IPAddress.Parse(ipAddress), port);
             _clients = new List<Client>();
         }
@@ -43,6 +47,7 @@ namespace SimpleServer
                 bf = new BinaryFormatter();
 
                 Socket socket = tcpListener.AcceptSocket();
+
                 Console.WriteLine("Connection Established");
                 Client _clientsTemp = new Client(socket);
                 _clients.Add(_clientsTemp);
@@ -67,29 +72,20 @@ namespace SimpleServer
         public void ClientMethod(object obj)
         {
             Client client = (Client)obj;
-            string receivedMessage = "hi";
-            int noOfIncomingBytes;
+            Packet packet;
 
-            while ((noOfIncomingBytes = client._reader.ReadInt32()) != 0)
+            while (client.TcpConnected())
             {
-                byte[] buffer = client._reader.ReadBytes(noOfIncomingBytes);
-                ms.SetLength(0);
-                ms.Capacity = 0;
-                ms.Write(buffer, 0, noOfIncomingBytes);
-                ms.Position = 0;
-                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
-                Packet packet = bf.Deserialize(ms) as Packet;
-                ms.SetLength(0);
-                ms.Capacity = 0;
-                GetReturnMessage(packet, client);
-
-                if (receivedMessage == "Shut Down")
+                if ((packet = client.TcpRead()) != null)
                 {
-                    break;
+                    GetReturnMessage(packet, client);
                 }
-
+                else if ((packet = client.UdpRead()) != null)
+                {
+                    GetReturnMessage(packet, client);
+                }
             }
-            client.socket.Close();
+            client.Close();
             _clients.Remove(client);
         }
 
@@ -104,7 +100,7 @@ namespace SimpleServer
             {
                 if (Sender.ServerLocation == _clients[i].ServerLocation)
                 {
-                    _clients[i].Send(input);
+                    _clients[i].TcpSend(input);
                 }
             }
         }
@@ -164,7 +160,7 @@ namespace SimpleServer
 
                     for (int j = 0; j < _clients.Count; j++)
                     {
-                        _clients[j].Send(SendPacket);
+                        _clients[j].TcpSend(SendPacket);
                         if (newName == true)
                         {
                             if (_clients[j].NameOfUser == client.NameOfUser)
@@ -243,6 +239,11 @@ namespace SimpleServer
                 case PacketType.ChatMessage:
                     MessageGroup(packetInput, client);
                     break;
+
+                case PacketType.EndPointPacket:
+                    EndPointPacket packet = (EndPointPacket)packetInput;
+                    client.CreateUdpConnection(packet, ipAddress, port);
+                    break;
             }
             
 
@@ -256,7 +257,7 @@ namespace SimpleServer
         {
             Console.WriteLine("Message: " + input + " Message Sent At: " + DateTime.Now.ToString("h:mm:ss tt")); //This allows a server log to be created
             ServerMessagePacket packet = new ServerMessagePacket(input);
-            client.Send(packet);
+            client.TcpSend(packet);
         }
     }
 
@@ -267,13 +268,15 @@ namespace SimpleServer
 
     class Client
     {
-        public Socket socket;
-        public NetworkStream stream;
-        public StreamReader reader { get; private set; }
-        public StreamWriter writer { get; private set; }
+        public Socket TcpSocket;
+        public Socket UdpSocket;
+        public NetworkStream _TcpStream;
+        public NetworkStream _UdpStream;
+        public BinaryReader _TcpReader { get; private set; }
+        public BinaryWriter _TcpWriter { get; private set; }
+        public BinaryReader _UdpReader { get; private set; }
+        public BinaryWriter _UdpWriter { get; private set; }
 
-        public BinaryReader _reader { get; private set; }
-        public BinaryWriter _writer { get; private set; }
         public MemoryStream ms { get; private set; }
         public BinaryFormatter bf { get; private set; }
 
@@ -284,18 +287,52 @@ namespace SimpleServer
         {
             NameOfUser = "New User";
             ServerLocation = 10;
-            socket = socketPassIn;
-            stream = new NetworkStream(socketPassIn);
-            reader = new StreamReader(stream, Encoding.UTF8);
-            writer = new StreamWriter(stream, Encoding.UTF8);
 
-            _reader = new BinaryReader(stream, Encoding.UTF8);
-            _writer = new BinaryWriter(stream, Encoding.UTF8);
+            TcpSocket = socketPassIn;
+            UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            _TcpStream = new NetworkStream(socketPassIn);
+            _UdpStream = new NetworkStream(socketPassIn);
+
+            _TcpReader = new BinaryReader(_TcpStream, Encoding.UTF8);
+            _TcpWriter = new BinaryWriter(_TcpStream, Encoding.UTF8);
+            _UdpReader = new BinaryReader(_UdpStream, Encoding.UTF8);
+            _UdpWriter = new BinaryWriter(_UdpStream, Encoding.UTF8);
+
             ms = new MemoryStream();
             bf = new BinaryFormatter();
         }
 
-        public void Send(Packet data)
+        public void CreateUdpConnection(EndPointPacket packet, string ipAddressPassIn, int port)
+        {
+            UdpSocket.Connect(packet.endPoint);
+            IPAddress ipAddress = Dns.Resolve(ipAddressPassIn).AddressList[0];
+            IPEndPoint ipLocalEndPoint = new IPEndPoint(ipAddress, port);
+            SocketAddress temp = ipLocalEndPoint.Serialize();
+            Packet SendPacket = new EndPointPacket(temp);
+            TcpSend(SendPacket);
+        }
+
+        public Packet TcpRead()
+        {
+            int noOfIncomingBytes = 0;
+            if ((noOfIncomingBytes = _TcpReader.ReadInt32()) != 0)
+            {
+                byte[] buffer = _TcpReader.ReadBytes(noOfIncomingBytes);
+                ms.SetLength(0);
+                ms.Capacity = 0;
+                ms.Write(buffer, 0, noOfIncomingBytes);
+                ms.Position = 0;
+                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
+                Packet packet = bf.Deserialize(ms) as Packet;
+                ms.SetLength(0);
+                ms.Capacity = 0;
+                return packet;
+            }
+            return null;
+        }
+
+        public void TcpSend(Packet data)
         {
             ms.SetLength(0);
             ms.Capacity = 0;
@@ -303,14 +340,55 @@ namespace SimpleServer
             ms.Position = 0;
             byte[] buffer = ms.GetBuffer();
 
-            _writer.Write(buffer.Length);
-            _writer.Write(buffer);
-            _writer.Flush();
+            _TcpWriter.Write(buffer.Length);
+            _TcpWriter.Write(buffer);
+            _TcpWriter.Flush();
+        }
+
+        public Packet UdpRead()
+        {
+            int noOfIncomingBytes = 0;
+            if ((noOfIncomingBytes = _UdpReader.ReadInt32()) != 0)
+            {
+                byte[] buffer = _UdpReader.ReadBytes(noOfIncomingBytes);
+                ms.SetLength(0);
+                ms.Capacity = 0;
+                ms.Write(buffer, 0, noOfIncomingBytes);
+                ms.Position = 0;
+                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
+                Packet packet = bf.Deserialize(ms) as Packet;
+                ms.SetLength(0);
+                ms.Capacity = 0;
+                return packet;
+            }
+            return null;
+        }
+
+        public void UdpSend(Packet data)
+        {
+            ms.SetLength(0);
+            ms.Capacity = 0;
+            bf.Serialize(ms, data);
+            ms.Position = 0;
+            byte[] buffer = ms.GetBuffer();
+
+            _UdpWriter.Write(buffer.Length);
+            _UdpWriter.Write(buffer);
+            _UdpWriter.Flush();
+        }
+
+        public bool TcpConnected()
+        {
+            if (_TcpReader != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         public void Close()
         {
-            socket.Close();
+            TcpSocket.Close();
         }
     }
 

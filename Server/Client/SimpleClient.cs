@@ -21,11 +21,12 @@ namespace SimpleClient
         public bool ShutDown = false;
         public int clientLocation = 11;
         private TcpClient tcpClient;
-        private NetworkStream stream;
-        private StreamWriter writer;
-        private StreamReader reader;
+        private NetworkStream TcpStream;
+        private NetworkStream UdpStream;
         private Thread thread;
         private ClientForm messageForm;
+
+        private Socket UdpSocket;
 
         private BinaryWriter _writer;
         private BinaryReader _reader;
@@ -52,12 +53,10 @@ namespace SimpleClient
             try
             {
                 tcpClient.Connect(IPAddress.Parse(ipAddress), port);
-                stream = tcpClient.GetStream();
-                reader = new StreamReader(stream, Encoding.UTF8);
-                writer = new StreamWriter(stream, Encoding.UTF8);
+                TcpStream = tcpClient.GetStream();
 
-                _writer = new BinaryWriter(stream, Encoding.UTF8);
-                _reader = new BinaryReader(stream, Encoding.UTF8);
+                _writer = new BinaryWriter(TcpStream, Encoding.UTF8);
+                _reader = new BinaryReader(TcpStream, Encoding.UTF8);
                 ms = new MemoryStream();
                 bf = new BinaryFormatter();
 
@@ -87,19 +86,6 @@ namespace SimpleClient
         {
             thread.Abort();
             tcpClient.Close();
-        }
-
-        public void InputName(string input)
-        {
-            input = "name " + input;
-            writer.WriteLine(input);
-            writer.Flush();
-        }
-
-        public void SendMessage(string input)
-        {
-            writer.WriteLine(input);
-            writer.Flush();
         }
 
         public void Send(Packet data)
@@ -152,6 +138,10 @@ namespace SimpleClient
                     case PacketType.ServerMessagePacket:
                         ServerMessagePacket packetServerMessage = (ServerMessagePacket)packet;
                         messageForm.UpdateChatWindow(packetServerMessage.message);
+                        break;
+                    case PacketType.EndPointPacket:
+                        EndPointPacket endPointPacket = (EndPointPacket)packet;
+                        UdpSocket.Connect(endPointPacket.endPoint);
                         break;
                     default:
 
