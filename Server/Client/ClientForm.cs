@@ -74,7 +74,7 @@ namespace Client
                 if (simpleclient.clientLocation != -1)
                 {
                     ChatMessagePacket packet = new ChatMessagePacket(UserInput.Text);
-                    simpleclient.Send(packet);
+                    simpleclient.UdpSend(packet);
                     UserInput.Text = "";
                 }
                 else
@@ -95,7 +95,7 @@ namespace Client
                 if (NameInput.Text != "")
                 {
                     NickNamePacket packet = new NickNamePacket(NameInput.Text,0);
-                    simpleclient.Send(packet);
+                    simpleclient.TcpSend(packet);
                     NameLabel.Text = NameInput.Text;
                     NameInput.Text = "";
                 }
@@ -114,7 +114,7 @@ namespace Client
                 if (e.KeyCode == Keys.Enter && NameInput.Text != "")
                 {
                     NickNamePacket packet = new NickNamePacket(NameInput.Text, 0);
-                    simpleclient.Send(packet);
+                    simpleclient.TcpSend(packet);
                     NameLabel.Text = NameInput.Text;
                     NameInput.Text = "";
                     e.Handled = true;
@@ -134,7 +134,7 @@ namespace Client
                 if (e.KeyCode == Keys.Enter && UserInput.Text != "")
                 {
                     ChatMessagePacket packet = new ChatMessagePacket(UserInput.Text);
-                    simpleclient.Send(packet);
+                    simpleclient.TcpSend(packet);
                     UserInput.Text = "";
                     e.Handled = true;
                     e.SuppressKeyPress = true;
@@ -169,7 +169,7 @@ namespace Client
         {
             //simpleclient.SendMessage(("ssi" + ServerSelectDropDown.SelectedItem.ToString() + "|" + ServerSelectDropDown.SelectedIndex.ToString())); //ssi server selected index
             ServerLocationPacket packet = new ServerLocationPacket(ServerSelectDropDown.SelectedItem.ToString(), ServerSelectDropDown.SelectedIndex);
-            simpleclient.Send(packet);
+            simpleclient.TcpSend(packet);
             LeaveChat.Text = "Leave Channel";
             //simpleclient.InputName(NameLabel.Text);
         }

@@ -203,10 +203,10 @@ namespace Packets
     {
         public EndPoint endPoint;
 
-        public EndPointPacket(SocketAddress address)
+        public EndPointPacket(EndPoint address)
         {
-            this.Type = PacketType.ServerMessagePacket;
-            this.endPoint = endPoint.Create(address);
+            this.Type = PacketType.EndPointPacket;
+            this.endPoint = address;
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
