@@ -181,5 +181,15 @@ namespace Client
                 serverInput.Text = "worked";
             }
         }
+
+        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            UserIcon.ImageLocation = openFileDialog1.FileName;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            simpleclient.game.Show();
+        }
     }
 }

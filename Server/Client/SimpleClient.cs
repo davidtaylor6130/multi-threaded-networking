@@ -39,6 +39,7 @@ namespace SimpleClient
 
         private Thread thread;
         private ClientForm messageForm;
+        public CheckersGame game;
 
         //-------------------------------------------------------------------------------------------------//
         //------------------Simple Client creates a new tcpClient for the client to use---------------------//
@@ -49,6 +50,7 @@ namespace SimpleClient
             tcpClient = new TcpClient();
             UdpClient = new UdpClient();
             messageForm = new ClientForm(this);
+            game = new CheckersGame(this);
         }
 
         //-------------------------------------------------------------------------------------------------//
@@ -251,12 +253,6 @@ namespace SimpleClient
                 {
                     ClientLogic(packet);
                 }
-
-                //if ((packet = UdpRead()) != null)
-                //{
-                //    ClientLogic(packet);
-                //    Console.WriteLine("UDP WORKIMNG");
-                //}
             }
         }
     }

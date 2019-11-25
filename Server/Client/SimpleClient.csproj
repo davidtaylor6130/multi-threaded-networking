@@ -45,6 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckersGame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CheckersGame.Designer.cs">
+      <DependentUpon>CheckersGame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CheckersLogic.cs" />
     <Compile Include="ClientForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,6 +71,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CheckersGame.resx">
+      <DependentUpon>CheckersGame.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
