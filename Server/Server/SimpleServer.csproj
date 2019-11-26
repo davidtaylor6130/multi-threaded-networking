@@ -41,6 +41,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -50,7 +51,11 @@
   <ItemGroup>
     <None Include="misc\App.config" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="..\Packets\Packets.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\PacketShared\PacketShared.csproj">
+      <Project>{F6B219EC-6857-4B76-A965-7B70D7FE517C}</Project>
+      <Name>PacketShared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

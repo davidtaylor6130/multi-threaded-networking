@@ -51,7 +51,6 @@
     <Compile Include="CheckersGame.Designer.cs">
       <DependentUpon>CheckersGame.cs</DependentUpon>
     </Compile>
-    <Compile Include="CheckersLogic.cs" />
     <Compile Include="ClientForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +81,35 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="..\Packets\Packets.projitems" Label="Shared" />
+  <ItemGroup>
+    <None Include="checkers img\player 1 King Selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="checkers img\player 1 King.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="checkers img\player 1 Selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="checkers img\player 1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="checkers img\player 2 King Selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="checkers img\player 2 King.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="checkers img\player 2 Selected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="checkers img\player 2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PacketShared\PacketShared.csproj">
+      <Project>{F6B219EC-6857-4B76-A965-7B70D7FE517C}</Project>
+      <Name>PacketShared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

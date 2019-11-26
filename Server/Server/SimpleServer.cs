@@ -150,6 +150,49 @@ namespace SimpleServer
                         ServerLog("Please Enter A Name", client); //error message if name isnt set to prevent glitches
                     }
 
+                    if (ServerLocation.serverLocation >= 5 && ServerLocation.serverLocation <= 10)
+                    {
+                        Client Gamer1 = null;
+                        Client Gamer2 = null;
+                        int locationIn_clients1 = -99;
+                        int locationIn_clients2 = -99;
+
+                        for (int i = 0; i < _clients.Count; i++)
+                        {
+                            if (client.ServerLocation == _clients[i].ServerLocation)
+                            {
+                                if (Gamer1 == null)
+                                {
+                                    Gamer1 = _clients[i];
+                                    locationIn_clients1 = i;
+                                }
+                                else if (Gamer2 == null)
+                                {
+                                    Gamer2 = _clients[i];
+                                    locationIn_clients2 = i;
+                                }
+                            }
+                            if (Gamer1 != null && Gamer2 != null)
+                            {
+                                Packet temp = new GameConnectionPacket(true);
+                                Gamer1.TcpSend(temp);
+                                Gamer2.TcpSend(temp);
+
+                                if (Gamer1 == client)
+                                {
+                                    client.gameVs = Gamer2.NameOfUser;
+                                    _clients[locationIn_clients2].gameVs = Gamer1.NameOfUser;
+
+                                }
+                                else if (Gamer2 == client)
+                                {
+                                    client.gameVs = Gamer1.NameOfUser;
+                                    _clients[locationIn_clients1].gameVs = Gamer2.NameOfUser;
+                                }
+                            }
+                        }
+                    }
+
                     break;
 
                 case PacketType.NickName:
@@ -260,6 +303,17 @@ namespace SimpleServer
                     t.Start(client);
 
                     break;
+                case PacketType.GamePacket:
+                    GamePacket gamePacket = (GamePacket) packetInput;
+                    for (int i = 0; i < _clients.Count; i++)
+                    {
+                        if (_clients[i].NameOfUser == client.gameVs)
+                        {
+                            _clients[i].UdpSend(gamePacket);
+                        }
+                    }
+                    Console.WriteLine(client.NameOfUser + ":" +  client.gameVs);
+                    break;
             }
             
 
@@ -298,12 +352,14 @@ namespace SimpleServer
         public BinaryFormatter bf { get; private set; }
 
         public string NameOfUser;
+        public string gameVs;
         public int ServerLocation;
 
         public Client(Socket socketPassIn)
         {
             NameOfUser = "New User";
             ServerLocation = 10;
+            gameVs = null;
 
             TcpSocket = socketPassIn;
             UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -332,7 +388,6 @@ namespace SimpleServer
                 ms.Capacity = 0;
                 ms.Write(buffer, 0, noOfIncomingBytes);
                 ms.Position = 0;
-                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
                 Packet packet = bf.Deserialize(ms) as Packet;
                 ms.SetLength(0);
                 ms.Capacity = 0;
@@ -360,7 +415,6 @@ namespace SimpleServer
             if ((noOfIncomingBytes = UdpSocket.Receive(bytes)) != 0)
             { 
                 ms = new MemoryStream(bytes);
-                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
                 Packet packet = bf.Deserialize(ms) as Packet;
                 return packet;
             }

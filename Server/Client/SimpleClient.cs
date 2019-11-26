@@ -6,14 +6,13 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
 using Client;
-using Packets;
 using System.Runtime.Serialization.Formatters.Binary;
+using Packets;
 
 namespace SimpleClient
 {
     public class SimpleClient
     {
-
         //-------------------------------------------------------------------------------------------------//
         //----------------------------------Desclration of public Verables---------------------------------//
         //-------------------------------------------------------------------------------------------------//
@@ -32,8 +31,6 @@ namespace SimpleClient
         private NetworkStream UdpStream;
         private BinaryWriter _TcpWriter;
         private BinaryReader _TcpReader;
-        private BinaryWriter _UdpWriter;
-        private BinaryReader _UdpReader;
         private MemoryStream ms;
         private BinaryFormatter bf;
 
@@ -82,10 +79,10 @@ namespace SimpleClient
 
                 Application.Run(messageForm);
             }
-            catch
+            catch (Exception e)
             {
-                Console.WriteLine("Cannot connect to:" + ipAddress + ":" + port + "sucsessfully");
-                return false;
+                 Console.WriteLine(e);
+                 return false;
             }
             return true;
         }
@@ -118,7 +115,6 @@ namespace SimpleClient
                 ms.Capacity = 0;
                 ms.Write(buffer, 0, noOfIncomingBytes);
                 ms.Position = 0;
-                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
                 Packet packet = bf.Deserialize(ms) as Packet;
                 ms.SetLength(0);
                 ms.Capacity = 0;
@@ -129,44 +125,21 @@ namespace SimpleClient
 
         public void TcpSend(Packet data)
         {
-            ms.SetLength(0);
-            ms.Capacity = 0;
+            ms = new MemoryStream();
             bf.Serialize(ms, data);
-            ms.Position = 0;
             byte[] buffer = ms.GetBuffer();
+            ms.Position = 0;
 
             _TcpWriter.Write(buffer.Length);
             _TcpWriter.Write(buffer);
             _TcpWriter.Flush();
         }
 
-        public Packet UdpRead()
-        {
-            int noOfIncomingBytes = 0;
-            if ((noOfIncomingBytes = _UdpReader.ReadInt32()) != 0)
-            {
-                byte[] buffer = _UdpReader.ReadBytes(noOfIncomingBytes);
-                ms.SetLength(0);
-                ms.Capacity = 0;
-                ms.Write(buffer, 0, noOfIncomingBytes);
-                ms.Position = 0;
-                bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
-                Packet packet = bf.Deserialize(ms) as Packet;
-                ms.SetLength(0);
-                ms.Capacity = 0;
-                return packet;
-            }
-            return null;
-        }
-
         public void UdpSend(Packet data)
         { 
-           ms.SetLength(0);
-           ms.Capacity = 0;
+           ms = new MemoryStream();
            bf.Serialize(ms, data);
-           ms.Position = 0;
            byte[] buffer = ms.GetBuffer();
-
            UdpClient.Send(buffer, buffer.Length);
         }
 
@@ -211,8 +184,16 @@ namespace SimpleClient
                     Thread t = new Thread(new ThreadStart(UDPServerResponce));
                     t.Start();
                     break;
+                case PacketType.GameConnectionPacket:
+                    game.ShowDialog();
+                    break;
+                case PacketType.GamePacket:
+                    GamePacket gamePacket = (GamePacket) packet;
+                    game.game.updatePositions(gamePacket.GameCheckers);
+                    game.UpdateOponents();
+                    break;
                 default:
-
+                    Console.WriteLine("PacketTypeNotKnown");
                     break;
             }
         }
@@ -231,7 +212,6 @@ namespace SimpleClient
                     ms.Capacity = 0;
                     ms.Write(bytes, 0, bytes.Length);
                     ms.Position = 0;
-                    bf.Binder = new AllowAllAssemblyVersionsDeserializationBinder();
                     Packet packet = bf.Deserialize(ms) as Packet;
                     ms.SetLength(0);
                     ms.Capacity = 0;
