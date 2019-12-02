@@ -163,7 +163,7 @@ namespace SimpleClient
             {
                 case PacketType.ChatMessage:
                     ChatMessagePacket packetChatMessage = (ChatMessagePacket)packet;
-                    messageForm.UpdateChatWindow(packetChatMessage.message);
+                    messageForm.UpdateChatWindow(packetChatMessage.message, packetChatMessage.From);
                     break;
                 case PacketType.DirectMessage:
                     break;
@@ -178,7 +178,9 @@ namespace SimpleClient
                     break;
                 case PacketType.ServerMessagePacket:
                     ServerMessagePacket packetServerMessage = (ServerMessagePacket)packet;
-                    messageForm.UpdateChatWindow(packetServerMessage.message);
+                    if (packetServerMessage.message == "ChatRoom Full You Have Been Moved to ChatRoom 1")
+                        messageForm.UpdateServerLocation();
+                    messageForm.UpdateChatWindow(packetServerMessage.message,"Server");
                     break;
                 case PacketType.EndPointPacket:
                     EndPointPacket endPoint = (EndPointPacket) packet;
@@ -204,6 +206,10 @@ namespace SimpleClient
                     game.game.YourTurnTrue = true;
                     game.game.ThereTurnTure = false;
                     game.UpdateNames();
+                    break;
+                case PacketType.NameInUsePacket:
+                    NameInUsePacket nameInUse = (NameInUsePacket) packet;
+                    messageForm._updateName(nameInUse.nameInUse);
                     break;
                 default:
                     Console.WriteLine("PacketTypeNotKnown");

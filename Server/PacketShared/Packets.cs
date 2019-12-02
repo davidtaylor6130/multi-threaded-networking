@@ -19,7 +19,8 @@ namespace Packets
         EndPointPacket,
         GameConnectionPacket,
         GamePacket,
-        TurnToggle
+        TurnToggle,
+        NameInUsePacket
     }
 
     [Serializable]
@@ -32,11 +33,13 @@ namespace Packets
     public class ChatMessagePacket : Packet
     {
         public string message = string.Empty;
+        public string From = "";
 
-        public ChatMessagePacket(string message)
+        public ChatMessagePacket(string message, string FromPassIn)
         {
             this.Type = PacketType.ChatMessage;
             this.message = message;
+            From = FromPassIn;
         }
     }
 
@@ -99,7 +102,7 @@ namespace Packets
 
         public ServerCommand(string CommandToServer)
         {
-            this.Type = PacketType.ChatMessage;
+            this.Type = PacketType.ServerCommand;
             this.CommandToServer = CommandToServer;
         }
     }
@@ -154,6 +157,17 @@ namespace Packets
             this.Type = PacketType.TurnToggle;
             this.toggle = togglePassIn;
             this.WhosTurn = whosTurnPassIn;
+        }
+    }
+
+    [Serializable]
+    public class NameInUsePacket : Packet
+    {
+        public bool nameInUse = false;
+        public NameInUsePacket(bool NameInUsePassIn = false)
+        {
+            this.Type = PacketType.NameInUsePacket;
+            this.nameInUse = NameInUsePassIn;
         }
     }
 
