@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Client;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography.X509Certificates;
 using Packets;
 
 namespace SimpleClient
@@ -169,6 +170,7 @@ namespace SimpleClient
                 case PacketType.NickName:
                     NickNamePacket packetUserList = (NickNamePacket)packet;
                     messageForm.updateWhosOnline(packetUserList);
+                    game.YourName = messageForm.YourName;
                     break;
                 case PacketType.ServerCommand:
                     break;
@@ -185,12 +187,23 @@ namespace SimpleClient
                     t.Start();
                     break;
                 case PacketType.GameConnectionPacket:
+                    GameConnectionPacket gamesConnectionPacket = (GameConnectionPacket) packet;
+                    game.player1Name = gamesConnectionPacket.player1;
+                    game.player2Name = gamesConnectionPacket.player2;
+                    game.UpdateNames();
                     game.ShowDialog();
                     break;
                 case PacketType.GamePacket:
                     GamePacket gamePacket = (GamePacket) packet;
                     game.game.updatePositions(gamePacket.GameCheckers);
                     game.UpdateOponents();
+                    break;
+                case PacketType.TurnToggle:
+                    TurnToggle togglePacket = (TurnToggle) packet;
+                    game.WhosGoUsername = togglePacket.WhosTurn;
+                    game.game.YourTurnTrue = true;
+                    game.game.ThereTurnTure = false;
+                    game.UpdateNames();
                     break;
                 default:
                     Console.WriteLine("PacketTypeNotKnown");

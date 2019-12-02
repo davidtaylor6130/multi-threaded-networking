@@ -30,12 +30,15 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CheckersGame));
             this.GameBoard = new System.Windows.Forms.PictureBox();
-            this.GameVsText = new System.Windows.Forms.Label();
+            this.Gamer1Name = new System.Windows.Forms.Label();
             this.GiveUp = new System.Windows.Forms.Button();
-            this.KingButton = new System.Windows.Forms.Button();
-            this.ActivePlayerUpdate = new System.Windows.Forms.Label();
-            this.ActivePlayer = new System.Windows.Forms.Label();
+            this.FinishGo = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label56 = new System.Windows.Forms.Label();
+            this.WhosGo = new System.Windows.Forms.Label();
+            this.HowToPlayText = new System.Windows.Forms.RichTextBox();
+            this.VSTEXT = new System.Windows.Forms.Label();
+            this.Gamer2Name = new System.Windows.Forms.Label();
             this.RedChecker1 = new System.Windows.Forms.PictureBox();
             this.RedChecker2 = new System.Windows.Forms.PictureBox();
             this.RedChecker4 = new System.Windows.Forms.PictureBox();
@@ -100,15 +103,16 @@
             this.GameBoard.TabIndex = 0;
             this.GameBoard.TabStop = false;
             // 
-            // GameVsText
+            // Gamer1Name
             // 
-            this.GameVsText.AutoSize = true;
-            this.GameVsText.Font = new System.Drawing.Font("Comic Sans MS", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GameVsText.Location = new System.Drawing.Point(23, 16);
-            this.GameVsText.Name = "GameVsText";
-            this.GameVsText.Size = new System.Drawing.Size(321, 45);
-            this.GameVsText.TabIndex = 1;
-            this.GameVsText.Text = "Player 1 VS Player 2";
+            this.Gamer1Name.AutoSize = true;
+            this.Gamer1Name.Font = new System.Drawing.Font("Comic Sans MS", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Gamer1Name.Location = new System.Drawing.Point(7, 19);
+            this.Gamer1Name.Name = "Gamer1Name";
+            this.Gamer1Name.Size = new System.Drawing.Size(136, 45);
+            this.Gamer1Name.TabIndex = 1;
+            this.Gamer1Name.Text = "Player 1";
+            this.Gamer1Name.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // GiveUp
             // 
@@ -121,49 +125,84 @@
             this.GiveUp.UseVisualStyleBackColor = true;
             this.GiveUp.Click += new System.EventHandler(this.GiveUp_Click);
             // 
-            // KingButton
+            // FinishGo
             // 
-            this.KingButton.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.KingButton.Location = new System.Drawing.Point(185, 581);
-            this.KingButton.Name = "KingButton";
-            this.KingButton.Size = new System.Drawing.Size(177, 75);
-            this.KingButton.TabIndex = 3;
-            this.KingButton.Text = "King Current";
-            this.KingButton.UseVisualStyleBackColor = true;
-            // 
-            // ActivePlayerUpdate
-            // 
-            this.ActivePlayerUpdate.AutoSize = true;
-            this.ActivePlayerUpdate.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ActivePlayerUpdate.Location = new System.Drawing.Point(224, 91);
-            this.ActivePlayerUpdate.Name = "ActivePlayerUpdate";
-            this.ActivePlayerUpdate.Size = new System.Drawing.Size(88, 29);
-            this.ActivePlayerUpdate.TabIndex = 4;
-            this.ActivePlayerUpdate.Text = "Player 1";
-            // 
-            // ActivePlayer
-            // 
-            this.ActivePlayer.AutoSize = true;
-            this.ActivePlayer.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ActivePlayer.Location = new System.Drawing.Point(26, 91);
-            this.ActivePlayer.Name = "ActivePlayer";
-            this.ActivePlayer.Size = new System.Drawing.Size(149, 29);
-            this.ActivePlayer.TabIndex = 5;
-            this.ActivePlayer.Text = "Active Player:";
+            this.FinishGo.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FinishGo.Location = new System.Drawing.Point(185, 581);
+            this.FinishGo.Name = "FinishGo";
+            this.FinishGo.Size = new System.Drawing.Size(177, 75);
+            this.FinishGo.TabIndex = 3;
+            this.FinishGo.Text = "Finish Go";
+            this.FinishGo.UseVisualStyleBackColor = true;
+            this.FinishGo.Click += new System.EventHandler(this.FinishGo_Click);
             // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.groupBox1.Controls.Add(this.ActivePlayer);
-            this.groupBox1.Controls.Add(this.GameVsText);
-            this.groupBox1.Controls.Add(this.KingButton);
-            this.groupBox1.Controls.Add(this.ActivePlayerUpdate);
+            this.groupBox1.Controls.Add(this.label56);
+            this.groupBox1.Controls.Add(this.WhosGo);
+            this.groupBox1.Controls.Add(this.HowToPlayText);
+            this.groupBox1.Controls.Add(this.VSTEXT);
+            this.groupBox1.Controls.Add(this.Gamer2Name);
+            this.groupBox1.Controls.Add(this.Gamer1Name);
+            this.groupBox1.Controls.Add(this.FinishGo);
             this.groupBox1.Controls.Add(this.GiveUp);
             this.groupBox1.Location = new System.Drawing.Point(743, 6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(362, 656);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label56.Location = new System.Drawing.Point(20, 333);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(149, 29);
+            this.label56.TabIndex = 10;
+            this.label56.Text = "Active Player:";
+            // 
+            // WhosGo
+            // 
+            this.WhosGo.AutoSize = true;
+            this.WhosGo.Font = new System.Drawing.Font("Comic Sans MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.WhosGo.Location = new System.Drawing.Point(175, 338);
+            this.WhosGo.Name = "WhosGo";
+            this.WhosGo.Size = new System.Drawing.Size(78, 23);
+            this.WhosGo.TabIndex = 9;
+            this.WhosGo.Text = "PLAYER1";
+            // 
+            // HowToPlayText
+            // 
+            this.HowToPlayText.Location = new System.Drawing.Point(15, 180);
+            this.HowToPlayText.Name = "HowToPlayText";
+            this.HowToPlayText.ReadOnly = true;
+            this.HowToPlayText.Size = new System.Drawing.Size(326, 137);
+            this.HowToPlayText.TabIndex = 8;
+            this.HowToPlayText.Text = resources.GetString("HowToPlayText.Text");
+            // 
+            // VSTEXT
+            // 
+            this.VSTEXT.AutoSize = true;
+            this.VSTEXT.Font = new System.Drawing.Font("Comic Sans MS", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VSTEXT.Location = new System.Drawing.Point(7, 73);
+            this.VSTEXT.Name = "VSTEXT";
+            this.VSTEXT.Size = new System.Drawing.Size(63, 45);
+            this.VSTEXT.TabIndex = 7;
+            this.VSTEXT.Text = "VS";
+            this.VSTEXT.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // Gamer2Name
+            // 
+            this.Gamer2Name.AutoSize = true;
+            this.Gamer2Name.Font = new System.Drawing.Font("Comic Sans MS", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Gamer2Name.Location = new System.Drawing.Point(1, 118);
+            this.Gamer2Name.Name = "Gamer2Name";
+            this.Gamer2Name.Size = new System.Drawing.Size(142, 45);
+            this.Gamer2Name.TabIndex = 6;
+            this.Gamer2Name.Text = "Player 2";
+            this.Gamer2Name.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // RedChecker1
             // 
@@ -176,8 +215,9 @@
             this.RedChecker1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker1.TabIndex = 6;
             this.RedChecker1.TabStop = false;
-            this.RedChecker1.Click += new System.EventHandler(this.RedChecker1_Click);
-            this.RedChecker1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker1_MouseMove);
+            this.RedChecker1.Click += new System.EventHandler(this.click);
+            this.RedChecker1.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker2
             // 
@@ -190,8 +230,9 @@
             this.RedChecker2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker2.TabIndex = 7;
             this.RedChecker2.TabStop = false;
-            this.RedChecker2.Click += new System.EventHandler(this.RedChecker2_Click);
-            this.RedChecker2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker2_MouseMove);
+            this.RedChecker2.Click += new System.EventHandler(this.click);
+            this.RedChecker2.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker4
             // 
@@ -204,8 +245,9 @@
             this.RedChecker4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker4.TabIndex = 9;
             this.RedChecker4.TabStop = false;
-            this.RedChecker4.Click += new System.EventHandler(this.RedChecker4_Click);
-            this.RedChecker4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker4_MouseMove);
+            this.RedChecker4.Click += new System.EventHandler(this.click);
+            this.RedChecker4.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker3
             // 
@@ -218,8 +260,9 @@
             this.RedChecker3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker3.TabIndex = 8;
             this.RedChecker3.TabStop = false;
-            this.RedChecker3.Click += new System.EventHandler(this.RedChecker3_Click);
-            this.RedChecker3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker3_MouseMove);
+            this.RedChecker3.Click += new System.EventHandler(this.click);
+            this.RedChecker3.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker8
             // 
@@ -232,8 +275,9 @@
             this.RedChecker8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker8.TabIndex = 13;
             this.RedChecker8.TabStop = false;
-            this.RedChecker8.Click += new System.EventHandler(this.RedChecker8_Click);
-            this.RedChecker8.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker8_MouseMove);
+            this.RedChecker8.Click += new System.EventHandler(this.click);
+            this.RedChecker8.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker8.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker7
             // 
@@ -246,8 +290,9 @@
             this.RedChecker7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker7.TabIndex = 12;
             this.RedChecker7.TabStop = false;
-            this.RedChecker7.Click += new System.EventHandler(this.RedChecker7_Click);
-            this.RedChecker7.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker7_MouseMove);
+            this.RedChecker7.Click += new System.EventHandler(this.click);
+            this.RedChecker7.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker7.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker6
             // 
@@ -260,8 +305,9 @@
             this.RedChecker6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker6.TabIndex = 11;
             this.RedChecker6.TabStop = false;
-            this.RedChecker6.Click += new System.EventHandler(this.RedChecker6_Click);
-            this.RedChecker6.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker6_MouseMove);
+            this.RedChecker6.Click += new System.EventHandler(this.click);
+            this.RedChecker6.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker6.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker5
             // 
@@ -274,8 +320,9 @@
             this.RedChecker5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker5.TabIndex = 10;
             this.RedChecker5.TabStop = false;
-            this.RedChecker5.Click += new System.EventHandler(this.RedChecker5_Click);
-            this.RedChecker5.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker5_MouseMove);
+            this.RedChecker5.Click += new System.EventHandler(this.click);
+            this.RedChecker5.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker5.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker12
             // 
@@ -288,8 +335,9 @@
             this.RedChecker12.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker12.TabIndex = 17;
             this.RedChecker12.TabStop = false;
-            this.RedChecker12.Click += new System.EventHandler(this.RedChecker12_Click);
-            this.RedChecker12.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker12_MouseMove);
+            this.RedChecker12.Click += new System.EventHandler(this.click);
+            this.RedChecker12.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker12.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker11
             // 
@@ -302,8 +350,9 @@
             this.RedChecker11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker11.TabIndex = 16;
             this.RedChecker11.TabStop = false;
-            this.RedChecker11.Click += new System.EventHandler(this.RedChecker11_Click);
-            this.RedChecker11.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker11_MouseMove);
+            this.RedChecker11.Click += new System.EventHandler(this.click);
+            this.RedChecker11.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker11.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker10
             // 
@@ -316,8 +365,9 @@
             this.RedChecker10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker10.TabIndex = 15;
             this.RedChecker10.TabStop = false;
-            this.RedChecker10.Click += new System.EventHandler(this.RedChecker10_Click);
-            this.RedChecker10.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker10_MouseMove);
+            this.RedChecker10.Click += new System.EventHandler(this.click);
+            this.RedChecker10.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker10.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // RedChecker9
             // 
@@ -330,8 +380,9 @@
             this.RedChecker9.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.RedChecker9.TabIndex = 14;
             this.RedChecker9.TabStop = false;
-            this.RedChecker9.Click += new System.EventHandler(this.RedChecker9_Click);
-            this.RedChecker9.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RedChecker9_MouseMove);
+            this.RedChecker9.Click += new System.EventHandler(this.click);
+            this.RedChecker9.DoubleClick += new System.EventHandler(this.DoubleClick);
+            this.RedChecker9.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove);
             // 
             // GrayChecker4
             // 
@@ -544,11 +595,9 @@
         #endregion
 
         private System.Windows.Forms.PictureBox GameBoard;
-        private System.Windows.Forms.Label GameVsText;
+        private System.Windows.Forms.Label Gamer1Name;
         private System.Windows.Forms.Button GiveUp;
-        private System.Windows.Forms.Button KingButton;
-        private System.Windows.Forms.Label ActivePlayerUpdate;
-        private System.Windows.Forms.Label ActivePlayer;
+        private System.Windows.Forms.Button FinishGo;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PictureBox RedChecker1;
         private System.Windows.Forms.PictureBox RedChecker2;
@@ -574,5 +623,10 @@
         private System.Windows.Forms.PictureBox GrayChecker11;
         private System.Windows.Forms.PictureBox GrayChecker10;
         private System.Windows.Forms.PictureBox GrayChecker9;
+        private System.Windows.Forms.Label VSTEXT;
+        private System.Windows.Forms.Label Gamer2Name;
+        private System.Windows.Forms.RichTextBox HowToPlayText;
+        private System.Windows.Forms.Label label56;
+        public System.Windows.Forms.Label WhosGo;
     }
 }

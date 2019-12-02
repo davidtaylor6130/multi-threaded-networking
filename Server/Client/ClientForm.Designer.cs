@@ -41,10 +41,10 @@
             this.EnterChat = new System.Windows.Forms.Button();
             this.NameButton = new System.Windows.Forms.Button();
             this.NameInput = new System.Windows.Forms.RichTextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.EnterButton = new System.Windows.Forms.Button();
             this.serverInput = new System.Windows.Forms.RichTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -202,6 +202,16 @@
             this.NameInput.Text = "Enter Name";
             this.NameInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.NameInput_KeyDown);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(133, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // EnterButton
             // 
             this.EnterButton.Location = new System.Drawing.Point(258, 473);
@@ -224,16 +234,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(133, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // ClientForm
             // 

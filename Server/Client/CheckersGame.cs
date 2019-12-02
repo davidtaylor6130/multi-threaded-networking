@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Packets;
 
@@ -15,12 +8,19 @@ namespace Client
 {
     public partial class CheckersGame : Form
     {
-
+        public string player1Name, player2Name;
         private delegate void UpdateOponentDelegate();
         private UpdateOponentDelegate _updateOponentDelegate;
 
+        private delegate void UpdateNamesDeligate();
+        private UpdateNamesDeligate _updateNamesDeligate;
+
+        public string WhosGoUsername = "";
+        public string YourName = "";
         private SimpleClient.SimpleClient client;
         public Checkers game = new Checkers();
+        public PictureBox[,] img = new PictureBox[2,12];
+        private Point lastMousePoint = new Point(0,0);
 
         public CheckersGame(SimpleClient.SimpleClient clientPassIn)
         {
@@ -30,13 +30,58 @@ namespace Client
             RedChecker1.BorderStyle = BorderStyle.None;
 
             _updateOponentDelegate = new UpdateOponentDelegate(UpdateOponents);
+            _updateNamesDeligate = new UpdateNamesDeligate(UpdateNames);
 
-            this.Hide();
+            img[0, 0] = RedChecker1;
+            img[0, 1] = RedChecker2;
+            img[0, 2] = RedChecker3;
+            img[0, 3] = RedChecker4;
+            img[0, 4] = RedChecker5;
+            img[0, 5] = RedChecker6;
+            img[0, 6] = RedChecker7;
+            img[0, 7] = RedChecker8;
+            img[0, 8] = RedChecker9;
+            img[0, 9] = RedChecker10;
+            img[0, 10] = RedChecker11;
+            img[0, 11] = RedChecker12;
+            
+            img[1, 0] = GrayChecker1;
+            img[1, 1] = GrayChecker2;
+            img[1, 2] = GrayChecker3;
+            img[1, 3] = GrayChecker4;
+            img[1, 4] = GrayChecker5;
+            img[1, 5] = GrayChecker6;
+            img[1, 6] = GrayChecker7;
+            img[1, 7] = GrayChecker8;
+            img[1, 8] = GrayChecker9;
+            img[1, 9] = GrayChecker10;
+            img[1, 10] = GrayChecker11;
+            img[1, 11] = GrayChecker12;
+
+            for (int i = 0; i < 2; i++)
+                for (int j = 0; j < 12; j++)
+                    game.positions[i, j] = img[i, j].Location;
+
+            game.sizeOfBoard = new Point(GameBoard.Width, GameBoard.Height);
+
+            Hide();
+        }
+
+        public void UpdateNames()
+        {
+            if (InvokeRequired)
+                Invoke(_updateNamesDeligate);
+            else
+            {
+                Gamer1Name.Text = player1Name;
+                Gamer2Name.Text = player2Name;
+                WhosGo.Text = WhosGoUsername;
+            }
         }
 
         private void CheckersGame_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.Hide();
+            Hide();
             game.resetPosition();
             e.Cancel = true;
         }
@@ -44,452 +89,109 @@ namespace Client
         private void GiveUp_Click(object sender, EventArgs e)
         {
             game.resetPosition();
-            this.Hide();
+            Hide();
         }
 
         public void UpdateOponents()
         {
             if (InvokeRequired)
-            {
                 Invoke(_updateOponentDelegate);
-            }
             else
+                for (int i = 0; i < 2; i++)
+                    for (int j = 0; j < 12; j++)
+                    {
+                        if (game.nowMoving[i, j] == true)
+                            img[i, j].Location = game.positions[i, j];
+                    }
+        }
+
+        private void MouseMove(object sender, MouseEventArgs e)
+        {
+            Point currentMousePoint = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
+            Point mouseMovementVector = new Point(lastMousePoint.X - currentMousePoint.X, lastMousePoint.Y - currentMousePoint.Y);
+
+            for (int i = 0; i < 2; i++)
+                for (int j = 0; j < 12; j++)
+                    if (sender.Equals(img[i, j]))
+                      if (game.nowMoving[i, j] == true)
+                      {
+                          game.MovementVectors[i, j] = mouseMovementVector; 
+                          img[i,j].Location = new Point(img[i, j].Location.X - mouseMovementVector.X, img[i, j].Location.Y - mouseMovementVector.Y);
+                          Packet temp = new GamePacket(game);
+                          client.UdpSend(temp);
+                      }
+
+            lastMousePoint = currentMousePoint;
+            Console.WriteLine(lastMousePoint + ":" + currentMousePoint + ":" + mouseMovementVector);
+
+            currentMousePoint.X = 0;
+            currentMousePoint.Y = 0;
+            mouseMovementVector.X = 0;
+            mouseMovementVector.Y = 0;
+        }
+
+        private void DoubleClick(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 2; i++)
+                for (int j = 0; j < 12; j++)
+                    if (sender.Equals(img[i, j]))
+                    {
+                        if (game.King[i, j] == false)
+                        {
+                            game.King[i, j] = true;
+                            img[i, j].Image = Properties.Resources.player_1_King;
+                        }
+                        else
+                        {
+                            game.King[i, j] = false;
+                            img[i, j].Image = Properties.Resources.player_1;
+                        }
+                    }
+        }
+
+        private void FinishGo_Click(object sender, EventArgs e)
+        { 
+            game.YourTurnTrue = false;
+            game.ThereTurnTure = true;
+            if (player1Name == YourName)
             {
-                GrayChecker1.Location = game.positions[1, 0];
+                WhosGo.Text = player2Name;
+                Packet packet = new TurnToggle(true, player2Name);
+                client.UdpSend(packet);
+            }
+            else if (player2Name == YourName)
+            {
+                WhosGo.Text = player1Name;
+                Packet packet = new TurnToggle(true, player1Name);
+                client.UdpSend(packet);
             }
         }
 
-        //--1--//
-        private void RedChecker1_MouseMove(object sender, MouseEventArgs e)
+        private void click(object sender, EventArgs e)
         {
-            if (game.nowMoving[0,0] == true)
+            if (game.YourTurnTrue)
             {
-                game.positions[0, 0] = RedChecker1.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-                Packet temp = new GamePacket(game);
-                client.UdpSend(temp);
-            }
-        }
-        private void RedChecker1_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 0] == false)
-            {
-                game.nowMoving[0, 0] = true;
-                if (game.King[0, 0] == false)
-                {
-                    RedChecker1.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker1.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 0] = false;
-                if (game.King[0, 0] == false)
-                {
-                    RedChecker1.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker1.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-
-        //--2--//
-        private void RedChecker2_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 1] == false)
-            {
-                game.nowMoving[0, 1] = true;
-                if (game.King[0, 1] == false)
-                {
-                    RedChecker2.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker2.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 1] = false;
-                if (game.King[0, 1] == false)
-                {
-                    RedChecker2.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker2.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker2_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 1] == true)
-            {
-                game.positions[0, 1] = RedChecker2.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-
-        //--3--//
-        private void RedChecker3_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 2] == false)
-            {
-                game.nowMoving[0, 2] = true;
-                if (game.King[0, 2] == false)
-                {
-                    RedChecker3.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker3.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 2] = false;
-                if (game.King[0, 2] == false)
-                {
-                    RedChecker3.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker3.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker3_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 2] == true)
-            {
-                game.positions[0, 2] = RedChecker3.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-
-        //--4--//
-        private void RedChecker4_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 3] == true)
-            {
-                game.positions[0, 3] = RedChecker4.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-        private void RedChecker4_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 3] == false)
-            {
-                game.nowMoving[0, 3] = true;
-                if (game.King[0, 3] == false)
-                {
-                    RedChecker4.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker4.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 3] = false;
-                if (game.King[0, 3] == false)
-                {
-                    RedChecker4.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker4.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-
-        //--5--//
-        private void RedChecker5_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 4] == false)
-            {
-                game.nowMoving[0, 4] = true;
-                if (game.King[0, 4] == false)
-                {
-                    RedChecker5.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker5.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            { 
-                game.nowMoving[0, 4] = false;
-                if (game.King[0, 4] == false)
-                {
-                    RedChecker5.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker5.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker5_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 4] == true)
-            {
-                game.positions[0, 4] = RedChecker5.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-
-        //--6--//
-        private void RedChecker6_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 5] == false)
-            {
-                game.nowMoving[0, 5] = true;
-                if (game.King[0, 5] == false)
-                {
-                    RedChecker6.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker6.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 5] = false;
-                if (game.King[0, 5] == false)
-                {
-                    RedChecker6.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker6.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker6_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 5] == true)
-            {
-                game.positions[0, 5] = RedChecker6.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-
-        //--7--//
-        private void RedChecker7_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 6] == true)
-            {
-                game.positions[0, 6] = RedChecker7.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-        private void RedChecker7_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 6] == false)
-            {
-                game.nowMoving[0, 6] = true;
-                if (game.King[0, 6] == false)
-                {
-                    RedChecker7.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker7.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 6] = false;
-                if (game.King[0, 6] == false)
-                {
-                    RedChecker7.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker7.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-
-        //--8--//
-        private void RedChecker8_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 7] == false)
-            {
-                game.nowMoving[0, 7] = true;
-                if (game.King[0, 7] == false)
-                {
-                    RedChecker8.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker8.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 7] = false;
-                if (game.King[0, 7] == false)
-                {
-                    RedChecker8.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker8.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker8_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 7] == true)
-            {
-                game.positions[0, 7] = RedChecker8.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-
-        //--9--//
-        private void RedChecker9_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 8] == false)
-            {
-                game.nowMoving[0, 8] = true;
-                if (game.King[0, 8] == false)
-                {
-                    RedChecker9.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker9.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 8] = false;
-                if (game.King[0, 8] == false)
-                {
-                    RedChecker9.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker9.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker9_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 8] == true)
-            {
-                game.positions[0, 8] = RedChecker9.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-
-        //--10--//
-        private void RedChecker10_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 9] == true)
-            {
-                game.positions[0, 9] = RedChecker10.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-        private void RedChecker10_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 9] == false)
-            {
-                game.nowMoving[0, 9] = true;
-                if (game.King[0, 9] == false)
-                {
-                    RedChecker10.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker10.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 9] = false;
-                if (game.King[0, 9] == false)
-                {
-                    RedChecker10.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker10.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-
-        //--11--//
-        private void RedChecker11_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 10] == false)
-            {
-                game.nowMoving[0, 10] = true;
-                if (game.King[0, 10] == false)
-                {
-                    RedChecker11.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker11.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 10] = false;
-                if (game.King[0, 10] == false)
-                {
-                    RedChecker11.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker11.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker11_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 10] == true)
-            {
-                game.positions[0, 10] = RedChecker11.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
-            }
-        }
-
-        //--12--//
-        private void RedChecker12_Click(object sender, EventArgs e)
-        {
-            if (game.nowMoving[0, 11] == false)
-            {
-                game.nowMoving[0, 11] = true;
-                if (game.King[0, 11] == false)
-                {
-                    RedChecker12.Image = Properties.Resources.player_1_Selected;
-                }
-                else
-                {
-                    RedChecker12.Image = Properties.Resources.player_1_King_Selected;
-                }
-            }
-            else
-            {
-                game.nowMoving[0, 11] = false;
-                if (game.King[0, 11] == false)
-                {
-                    RedChecker12.Image = Properties.Resources.player_1;
-                }
-                else
-                {
-                    RedChecker12.Image = Properties.Resources.player_1_King;
-                }
-            }
-        }
-        private void RedChecker12_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (game.nowMoving[0, 11] == true)
-            {
-                game.positions[0, 11] = RedChecker12.Location = PointToClient(new Point(Cursor.Position.X - 30, Cursor.Position.Y - 30));
+                for (int i = 0; i < 2; i++)
+                    for (int j = 0; j < 12; j++)
+                        if (sender.Equals(img[i, j]))
+                            if (game.nowMoving[i, j] == false)
+                            {
+                                img[i, j].BringToFront();
+                                game.nowMoving[i, j] = true;
+                                if (game.King[i, j] == false)
+                                    img[i, j].Image = Properties.Resources.player_1_Selected;
+                                else
+                                    img[i, j].Image = Properties.Resources.player_1_King_Selected;
+                            }
+                            else
+                            {
+                                img[i, j].BringToFront();
+                                game.nowMoving[i, j] = false;
+                                if (game.King[i, j] == false)
+                                    img[i, j].Image = Properties.Resources.player_1;
+                                else
+                                    img[i, j].Image = Properties.Resources.player_1_King;
+                            }
             }
         }
     }

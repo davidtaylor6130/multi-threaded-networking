@@ -15,6 +15,8 @@ namespace Client
         public delegate void UpdateWhosOnlineDelegate(NickNamePacket message);
         public UpdateWhosOnlineDelegate _updateWhosOnline;
 
+        public string YourName = "";
+
         public ClientForm(SimpleClient.SimpleClient simpleclientPassIn)
         {
             simpleclient = simpleclientPassIn;
@@ -37,6 +39,8 @@ namespace Client
                 {
                     OnlineNamesDisplay.Text += message.Name[i] + Environment.NewLine;
                 }
+
+                YourName = NameLabel.Text;
             }
         }
 

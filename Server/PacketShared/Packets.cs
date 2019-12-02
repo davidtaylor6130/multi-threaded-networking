@@ -18,7 +18,8 @@ namespace Packets
         ServerMessagePacket,
         EndPointPacket,
         GameConnectionPacket,
-        GamePacket
+        GamePacket,
+        TurnToggle
     }
 
     [Serializable]
@@ -119,11 +120,15 @@ namespace Packets
     public class GameConnectionPacket : Packet
     {
         public bool startGameSession;
+        public string player1;
+        public string player2;
 
-        public GameConnectionPacket(bool address)
+        public GameConnectionPacket(bool address, string player1PassIn, string player2PassIn)
         {
             this.Type = PacketType.GameConnectionPacket;
             this.startGameSession = address;
+            this.player1 = player1PassIn;
+            this.player2 = player2PassIn;
         }
     }
 
@@ -138,4 +143,18 @@ namespace Packets
             this.GameCheckers = address;
         }
     }
+
+    [Serializable]
+    public class TurnToggle : Packet
+    {
+        public bool toggle = false;
+        public string WhosTurn = "Player1";
+        public TurnToggle(bool togglePassIn, string whosTurnPassIn)
+        {
+            this.Type = PacketType.TurnToggle;
+            this.toggle = togglePassIn;
+            this.WhosTurn = whosTurnPassIn;
+        }
+    }
+
 }

@@ -14,22 +14,20 @@ namespace Client
         public bool[,] nowMoving = new bool[2, 12];
         public bool[,] King = new bool[2, 12];
         public Point[,] positions = new Point[2, 12];
+        public Point[,] MovementVectors = new Point[2, 12];
+        public Point sizeOfBoard = new Point(0,0);
+        public bool YourTurnTrue = false;
+        public bool ThereTurnTure = false;
 
         public Checkers()
         {
-
             for (int i = 0; i < 2; i++)
-            {
                 for (int k = 0; k < 12; k++)
                 {
                     nowMoving[i, k] = false;
                     King[i, k] = false;
-
                 }
-            }
-
             resetPosition();
-
         }
 
         public void resetPosition()
@@ -49,8 +47,6 @@ namespace Client
             positions[0, 10] = new Point(367, 583);
             positions[0, 11] = new Point(544, 583);
 
-
-
             positions[1, 0] = new Point(103, 10);
             positions[1, 1] = new Point(280, 10);
             positions[1, 2] = new Point(455, 10);
@@ -69,12 +65,15 @@ namespace Client
 
         public void updatePositions (Checkers passIn)
         {
+            int reverse = 11;
             for (int i = 0; i < 12; i++)
             {
-                positions[1, i] = passIn.positions[0, i];
+                positions[1,reverse] = new Point(positions[1, reverse].X - (-(passIn.MovementVectors[0,i].X)), positions[1, reverse].Y - (-(passIn.MovementVectors[0, i].Y)));
+                //Console.WriteLine(passIn.positions[1,11]);
+                nowMoving[1, reverse] = passIn.nowMoving[0, i];
+                King[1, reverse] = passIn.King[0, i];
+                reverse--;
             }
-            
         }
-
     }
 }

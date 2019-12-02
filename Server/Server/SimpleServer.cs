@@ -81,7 +81,7 @@ namespace SimpleServer
             }
             catch (Exception e)
             {
-               // Console.WriteLine(e);
+               Console.WriteLine(e);
             }
         }
 
@@ -174,7 +174,7 @@ namespace SimpleServer
                             }
                             if (Gamer1 != null && Gamer2 != null)
                             {
-                                Packet temp = new GameConnectionPacket(true);
+                                Packet temp = new GameConnectionPacket(true, Gamer1.NameOfUser, Gamer2.NameOfUser);
                                 Gamer1.TcpSend(temp);
                                 Gamer2.TcpSend(temp);
 
@@ -303,6 +303,18 @@ namespace SimpleServer
                     t.Start(client);
 
                     break;
+
+                case PacketType.TurnToggle:
+                    TurnToggle togglePacket = (TurnToggle) packetInput;
+                    for (int i = 0; i < _clients.Count; i++ )
+                    {
+                        if (_clients[i].NameOfUser == togglePacket.WhosTurn)
+                        {
+                            _clients[i].UdpSend(packetInput);
+                        }
+                    }
+                    break;
+
                 case PacketType.GamePacket:
                     GamePacket gamePacket = (GamePacket) packetInput;
                     for (int i = 0; i < _clients.Count; i++)
@@ -423,16 +435,11 @@ namespace SimpleServer
 
         public void UdpSend(Packet data)
         {
-            if (UdpConnected())
-            {
-                ms.SetLength(0);
-                ms.Capacity = 0;
+            ms = new MemoryStream();
                 bf.Serialize(ms, data);
                 ms.Position = 0;
                 byte[] buffer = ms.GetBuffer();
-
                 UdpSocket.Send(buffer);
-            }
         }
 
         public bool TcpConnected()
@@ -447,11 +454,6 @@ namespace SimpleServer
         public void Close()
         {
             TcpSocket.Close();
-        }
-
-        public bool TCPConnected()
-        {
-            return TcpSocket.Connected;
         }
 
         public bool UdpConnected()
