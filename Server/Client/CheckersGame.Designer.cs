@@ -94,6 +94,7 @@
             // GameBoard
             // 
             this.GameBoard.BackColor = System.Drawing.Color.Black;
+            this.GameBoard.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("GameBoard.BackgroundImage")));
             this.GameBoard.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.GameBoard.Image = ((System.Drawing.Image)(resources.GetObject("GameBoard.Image")));
             this.GameBoard.Location = new System.Drawing.Point(7, 6);
@@ -239,7 +240,7 @@
             this.RedChecker4.BackColor = System.Drawing.Color.Transparent;
             this.RedChecker4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.RedChecker4.Image = ((System.Drawing.Image)(resources.GetObject("RedChecker4.Image")));
-            this.RedChecker4.Location = new System.Drawing.Point(543, 419);
+            this.RedChecker4.Location = new System.Drawing.Point(544, 419);
             this.RedChecker4.Name = "RedChecker4";
             this.RedChecker4.Size = new System.Drawing.Size(74, 73);
             this.RedChecker4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -560,6 +561,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.GameBoard);
             this.Name = "CheckersGame";
+            this.Text = "Checkers";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CheckersGame_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.GameBoard)).EndInit();
             this.groupBox1.ResumeLayout(false);

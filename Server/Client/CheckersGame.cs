@@ -60,7 +60,9 @@ namespace Client
 
             for (int i = 0; i < 2; i++)
                 for (int j = 0; j < 12; j++)
+                {
                     game.positions[i, j] = img[i, j].Location;
+                }
 
             game.sizeOfBoard = new Point(GameBoard.Width, GameBoard.Height);
 
@@ -83,12 +85,18 @@ namespace Client
         {
             Hide();
             game.resetPosition();
+            
             e.Cancel = true;
         }
 
         private void GiveUp_Click(object sender, EventArgs e)
         {
             game.resetPosition();
+            for (int i = 0; i < 2; i++)
+                for (int j = 0; j < 12; j++)
+                {
+                    img[i, j].Location = game.positions[i, j];
+                } 
             Hide();
         }
 

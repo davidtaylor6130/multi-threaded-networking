@@ -75,14 +75,12 @@ namespace SimpleClient
 
                 TcpSend(new EndPointPacket(UdpClient.Client.LocalEndPoint));
 
-                //UDP CONNECT CLIENT THROUGH HOST NAMe AND PORT
-                //TCP SEND THE CONNECT PACKET
-
                 Application.Run(messageForm);
             }
             catch (Exception e)
             {
                  Console.WriteLine(e);
+                 Console.WriteLine("HELPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPp");
                  return false;
             }
             return true;
@@ -112,8 +110,7 @@ namespace SimpleClient
             if ((noOfIncomingBytes = _TcpReader.ReadInt32()) != 0)
             {
                 byte[] buffer = _TcpReader.ReadBytes(noOfIncomingBytes);
-                ms.SetLength(0);
-                ms.Capacity = 0;
+                ms = new MemoryStream();
                 ms.Write(buffer, 0, noOfIncomingBytes);
                 ms.Position = 0;
                 Packet packet = bf.Deserialize(ms) as Packet;
@@ -163,7 +160,7 @@ namespace SimpleClient
             {
                 case PacketType.ChatMessage:
                     ChatMessagePacket packetChatMessage = (ChatMessagePacket)packet;
-                    messageForm.UpdateChatWindow(packetChatMessage.message);
+                    messageForm.UpdateChatWindow(packetChatMessage.message, packetChatMessage.From);
                     break;
                 case PacketType.DirectMessage:
                     break;
@@ -178,7 +175,7 @@ namespace SimpleClient
                     break;
                 case PacketType.ServerMessagePacket:
                     ServerMessagePacket packetServerMessage = (ServerMessagePacket)packet;
-                    messageForm.UpdateChatWindow(packetServerMessage.message);
+                    messageForm.UpdateChatWindow(packetServerMessage.message, "Server");
                     break;
                 case PacketType.EndPointPacket:
                     EndPointPacket endPoint = (EndPointPacket) packet;
@@ -205,6 +202,10 @@ namespace SimpleClient
                     game.game.ThereTurnTure = false;
                     game.UpdateNames();
                     break;
+                case PacketType.NameInUsePacket:
+                    NameInUsePacket nameInUse = (NameInUsePacket) packet;
+                        messageForm._updateName(nameInUse.toggle);
+                    break;
                 default:
                     Console.WriteLine("PacketTypeNotKnown");
                     break;
@@ -221,8 +222,6 @@ namespace SimpleClient
                     byte[] bytes = UdpClient.Receive(ref endPoint);
 
                     MemoryStream mem = new MemoryStream(bytes);
-                    ms.SetLength(0);
-                    ms.Capacity = 0;
                     ms.Write(bytes, 0, bytes.Length);
                     ms.Position = 0;
                     Packet packet = bf.Deserialize(ms) as Packet;
