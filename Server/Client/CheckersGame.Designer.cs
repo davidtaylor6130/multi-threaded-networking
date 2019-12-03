@@ -560,7 +560,6 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.GameBoard);
             this.Name = "CheckersGame";
-            this.Text = "Checkers";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CheckersGame_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.GameBoard)).EndInit();
             this.groupBox1.ResumeLayout(false);

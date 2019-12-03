@@ -9,21 +9,13 @@ namespace Client
 
         public SimpleClient.SimpleClient simpleclient;
 
-        private delegate void UpdateChatWindowDelegate(string message, string From);
+        private delegate void UpdateChatWindowDelegate(string message);
         private UpdateChatWindowDelegate _updateChatWindowDelgate;
 
         public delegate void UpdateWhosOnlineDelegate(NickNamePacket message);
         public UpdateWhosOnlineDelegate _updateWhosOnline;
 
-        public delegate void UpdateNameDelegate(bool IsInUse);
-        public UpdateNameDelegate _updateName;
-
-        public delegate void updateServerLocation();
-        public updateServerLocation _UpdateServerLocation;
-
-
         public string YourName = "";
-        public string TempName = "";
 
         public ClientForm(SimpleClient.SimpleClient simpleclientPassIn)
         {
@@ -31,33 +23,7 @@ namespace Client
             InitializeComponent();
             _updateChatWindowDelgate = new UpdateChatWindowDelegate(UpdateChatWindow);
             _updateWhosOnline = new UpdateWhosOnlineDelegate(updateWhosOnline);
-            _updateName = new UpdateNameDelegate(UpdateName);
-            _UpdateServerLocation = new updateServerLocation(UpdateServerLocation);
-        }
 
-        public void UpdateServerLocation()
-        {
-            if (InvokeRequired)
-                Invoke(_UpdateServerLocation);
-            else
-                ServerSelectDropDown.SelectedItem = "Server 1";
-        }
-
-        public void UpdateName(bool IsInUse)
-        {
-            if (InvokeRequired)
-                Invoke(_updateName, IsInUse);
-            else
-            {
-                if (IsInUse == true)
-                {
-                    serverInput.Text += "That Name Is In Use Please Select Another One" + Environment.NewLine;
-                }
-                else
-                {
-                    NameLabel.Text = TempName;
-                }
-            }
         }
 
         public void updateWhosOnline(NickNamePacket message)
@@ -78,17 +44,17 @@ namespace Client
             }
         }
 
-        public void UpdateChatWindow(string message, string From)
+        public void UpdateChatWindow(string message)
         {
             if (serverInput.InvokeRequired)
             {
-                Invoke(_updateChatWindowDelgate, message, From);
+                Invoke(_updateChatWindowDelgate, message);
             }
             else
             {
                 if (message != "un")
                 {
-                    serverInput.Text += From + ": " + message + Environment.NewLine;
+                    serverInput.Text += message + Environment.NewLine;
                     serverInput.SelectionStart = serverInput.Text.Length;
                     serverInput.ScrollToCaret();
                 }
@@ -111,19 +77,9 @@ namespace Client
             {
                 if (simpleclient.clientLocation != -1)
                 {
-
-                    if (UserInput.Text != "" && UserInput.Text[0] != '/')
-                    {
-                        ChatMessagePacket packet = new ChatMessagePacket(UserInput.Text, NameLabel.Text);
-                        simpleclient.TcpSend(packet);
-                        UserInput.Text = "";
-                    }
-                    if (UserInput.Text[0] == '/')
-                    {
-                        ServerCommand packet = new ServerCommand(UserInput.Text);
-                        simpleclient.TcpSend(packet);
-                        UserInput.Text = "";
-                    }
+                    ChatMessagePacket packet = new ChatMessagePacket(UserInput.Text);
+                    simpleclient.UdpSend(packet);
+                    UserInput.Text = "";
                 }
                 else
                 {
@@ -144,7 +100,7 @@ namespace Client
                 {
                     NickNamePacket packet = new NickNamePacket(NameInput.Text,0);
                     simpleclient.TcpSend(packet);
-                    TempName = NameInput.Text;
+                    NameLabel.Text = NameInput.Text;
                     NameInput.Text = "";
                 }
             }
@@ -163,7 +119,7 @@ namespace Client
                 {
                     NickNamePacket packet = new NickNamePacket(NameInput.Text, 0);
                     simpleclient.TcpSend(packet);
-                    TempName = NameInput.Text;
+                    NameLabel.Text = NameInput.Text;
                     NameInput.Text = "";
                     e.Handled = true;
                     e.SuppressKeyPress = true;
@@ -179,18 +135,9 @@ namespace Client
         {
             if (simpleclient.clientLocation != -1)
             {
-                if (e.KeyCode == Keys.Enter && UserInput.Text != "" && UserInput.Text[0] != '/')
+                if (e.KeyCode == Keys.Enter && UserInput.Text != "")
                 {
-                    ChatMessagePacket packet = new ChatMessagePacket(UserInput.Text, NameLabel.Text);
-                    simpleclient.TcpSend(packet);
-                    UserInput.Text = "";
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
-                }
-
-                if (e.KeyCode == Keys.Enter && UserInput.Text[0] == '/')
-                {
-                    ServerCommand packet = new ServerCommand(UserInput.Text);
+                    ChatMessagePacket packet = new ChatMessagePacket(UserInput.Text);
                     simpleclient.TcpSend(packet);
                     UserInput.Text = "";
                     e.Handled = true;
@@ -223,10 +170,12 @@ namespace Client
         }
 
         private void EnterChat_Click(object sender, EventArgs e)
-        { 
+        {
+            //simpleclient.SendMessage(("ssi" + ServerSelectDropDown.SelectedItem.ToString() + "|" + ServerSelectDropDown.SelectedIndex.ToString())); //ssi server selected index
             ServerLocationPacket packet = new ServerLocationPacket(ServerSelectDropDown.SelectedItem.ToString(), ServerSelectDropDown.SelectedIndex);
             simpleclient.TcpSend(packet);
             LeaveChat.Text = "Leave Channel";
+            //simpleclient.InputName(NameLabel.Text);
         }
 
         private void UserIcon_Click(object sender, EventArgs e)
@@ -242,7 +191,7 @@ namespace Client
             UserIcon.ImageLocation = openFileDialog1.FileName;
         }
 
-        private void ShowGameClick(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             simpleclient.game.Show();
         }
