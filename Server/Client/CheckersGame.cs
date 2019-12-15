@@ -175,6 +175,13 @@ namespace Client
             }
         }
 
+        //private void CheckersGame_Load(object sender, EventArgs e)
+        //{
+        //   // RedChecker1.Parent = GameBoard;
+        //   // RedChecker1.BackColor = Color.Transparent;
+            
+        //}
+
         private void click(object sender, EventArgs e)
         {
             if (game.YourTurnTrue)

@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Client.CheckersGame">
+    <Position X="10" Y="0.5" Width="3.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="Client.CheckersGame.UpdateOponentDelegate">
+        <TypeIdentifier>
+          <NewMemberFileName>CheckersGame.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="Client.CheckersGame.UpdateNamesDeligate">
+        <TypeIdentifier>
+          <NewMemberFileName>CheckersGame.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAEACAAFAQBAQGggAESBAIIIAAIojUKFxyAgBA=</HashCode>
+      <FileName>CheckersGame.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="game" />
+      <Field Name="client" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Client.ClientForm">
+    <Position X="2.5" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="Client.ClientForm.UpdateChatWindowDelegate">
+        <TypeIdentifier>
+          <NewMemberFileName>ClientForm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="Client.ClientForm.UpdateWhosOnlineDelegate">
+        <TypeIdentifier>
+          <NewMemberFileName>ClientForm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="Client.ClientForm.UpdateNameDelegate">
+        <TypeIdentifier>
+          <NewMemberFileName>ClientForm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="Client.ClientForm.updateServerLocation">
+        <TypeIdentifier>
+          <NewMemberFileName>ClientForm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAEACABEACwAAJAAoBCIQGASKJAQAQAAAAAoQwtOIAQ=</HashCode>
+      <FileName>ClientForm.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="simpleclient" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SimpleClient.Program">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SimpleClient.SimpleClient">
+    <Position X="6.25" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAIAAAgBEGEAABgCIAAIAAIAAgcZASAASAAAAI=</HashCode>
+      <FileName>SimpleClient.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="game" />
+      <Field Name="messageForm" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Client.Properties.Resources">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAwAAAAAAAAEAABEAAAAQAAAIQAIAAAIBAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client.Checkers">
+    <Position X="6.5" Y="7.5" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="10" />
+</ClassDiagram>

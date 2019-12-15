@@ -106,18 +106,22 @@ namespace SimpleClient
 
         public Packet TcpRead()
         {
-            int noOfIncomingBytes = 0;
-            if ((noOfIncomingBytes = _TcpReader.ReadInt32()) != 0)
+            if (ShutDown == false)
             {
-                byte[] buffer = _TcpReader.ReadBytes(noOfIncomingBytes);
-                ms = new MemoryStream();
-                ms.Write(buffer, 0, noOfIncomingBytes);
-                ms.Position = 0;
-                Packet packet = bf.Deserialize(ms) as Packet;
-                ms.SetLength(0);
-                ms.Capacity = 0;
-                return packet;
+                int noOfIncomingBytes = 0;
+                if ((noOfIncomingBytes = _TcpReader.ReadInt32()) != 0)
+                {
+                    byte[] buffer = _TcpReader.ReadBytes(noOfIncomingBytes);
+                    ms = new MemoryStream();
+                    ms.Write(buffer, 0, noOfIncomingBytes);
+                    ms.Position = 0;
+                    Packet packet = bf.Deserialize(ms) as Packet;
+                    ms.SetLength(0);
+                    ms.Capacity = 0;
+                    return packet;
+                }
             }
+
             return null;
         }
 
@@ -241,7 +245,7 @@ namespace SimpleClient
             Packet packet;
             while (TcpConnected())
             {
-                if ((packet = TcpRead()) != null)
+                if ((packet = TcpRead()) != null && ShutDown == false)
                 {
                     ClientLogic(packet);
                 }

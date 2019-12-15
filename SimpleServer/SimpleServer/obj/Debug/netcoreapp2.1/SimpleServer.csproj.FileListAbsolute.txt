@@ -4,7 +4,6 @@ C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleSer
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleServer\bin\Debug\netcoreapp2.1\SimpleServer.dll
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleServer\bin\Debug\netcoreapp2.1\SimpleServer.pdb
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleServer\obj\Debug\netcoreapp2.1\SimpleServer.csprojAssemblyReference.cache
-C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleServer\obj\Debug\netcoreapp2.1\SimpleServer.csproj.CoreCompileInputs.cache
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleServer\obj\Debug\netcoreapp2.1\SimpleServer.AssemblyInfoInputs.cache
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleServer\obj\Debug\netcoreapp2.1\SimpleServer.AssemblyInfo.cs
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleServer\obj\Debug\netcoreapp2.1\SimpleServer.dll

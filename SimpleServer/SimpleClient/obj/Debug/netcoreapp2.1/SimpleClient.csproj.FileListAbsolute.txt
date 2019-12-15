@@ -1,5 +1,4 @@
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleClient\obj\Debug\netcoreapp2.1\SimpleClient.csprojAssemblyReference.cache
-C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleClient\obj\Debug\netcoreapp2.1\SimpleClient.csproj.CoreCompileInputs.cache
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleClient\obj\Debug\netcoreapp2.1\SimpleClient.AssemblyInfoInputs.cache
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleClient\obj\Debug\netcoreapp2.1\SimpleClient.AssemblyInfo.cs
 C:\Users\co0ki\Documents\GitHub\multi-threaded-networking\SimpleServer\SimpleClient\bin\Debug\netcoreapp2.1\SimpleClient.deps.json

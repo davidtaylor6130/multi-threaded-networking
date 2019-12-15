@@ -21,7 +21,8 @@ namespace Packets
         GamePacket,
         TurnToggle,
         NameInUsePacket,
-        RockPaperScissors
+        RockPaperScissors,
+        EndConnectionPacket
     }
 
     [Serializable]
@@ -182,6 +183,18 @@ namespace Packets
         public RockPaperScissors(string SelectionPassIn)
         {
             this.Type = PacketType.RockPaperScissors;
+            Selection = SelectionPassIn;
+        }
+    }
+
+    [Serializable]
+    public class EndConnectionPacket : Packet
+    {
+        public string Selection = "";
+
+        public EndConnectionPacket(string SelectionPassIn)
+        {
+            this.Type = PacketType.EndConnectionPacket;
             Selection = SelectionPassIn;
         }
     }

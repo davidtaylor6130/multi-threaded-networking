@@ -254,6 +254,8 @@ namespace Client
             }
             else
             {
+                EndConnectionPacket Packet = new EndConnectionPacket("True");
+                simpleclient.TcpSend(Packet);
                 simpleclient.ShutDown = true;
                 simpleclient.Stop();
                 this.Close();
@@ -271,7 +273,7 @@ namespace Client
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                serverInput.Text = "worked";
+                
             }
         }
 
